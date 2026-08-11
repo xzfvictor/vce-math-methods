@@ -1,59 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
-row="m10-algebra-binomial-difference-of-squares|m10-algebra-binomial|difference-of-squares|M10AlgebraBinomialDifferenceOfSquaresScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-exponent-laws-negative-zero-indices|m10-algebra-exponent-laws|negative-zero-indices|M10AlgebraExponentLawsNegativeZeroIndicesScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-factorisation-common-factor|m10-algebra-factorisation|common-factor|M10AlgebraFactorisationCommonFactorScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-fractions-add-subtract|m10-algebra-fractions|add-subtract|M10AlgebraFractionsAddSubtractScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-linear-eq-model|m10-algebra-linear-eq|model|M10AlgebraLinearEqModelScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-linear-inequalities-graph|m10-algebra-linear-inequalities|graph|M10AlgebraLinearInequalitiesGraphScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-modelling-inverse-proportion|m10-algebra-modelling|inverse-proportion|M10AlgebraModellingInverseProportionScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-quadratics-discriminant|m10-algebra-quadratics|discriminant|M10AlgebraQuadraticsDiscriminantScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-algebra-relations-transformations|m10-algebra-relations|transformations|M10AlgebraRelationsTransformationsScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-measurement-area-volume-surface-area|m10-measurement-area-volume|surface-area|M10MeasurementAreaVolumeSurfaceAreaScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-measurement-scaling-errors|m10-measurement-scaling|errors|M10MeasurementScalingErrorsScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-measurement-trig-elevation-depression|m10-measurement-trig|elevation-depression|M10MeasurementTrigElevationDepressionScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-number-approximations-rounding-truncation|m10-number-approximations|rounding-truncation|M10NumberApproximationsRoundingTruncationScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-probability-conditional-trees-without-replacement|m10-probability-conditional|trees-without-replacement|M10ProbabilityConditionalTreesWithoutReplacementScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-space-networks-euler-polyhedra|m10-space-networks|euler-polyhedra|M10SpaceNetworksEulerPolyhedraScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-space-proofs-isosceles-properties|m10-space-proofs|isosceles-properties|M10SpaceProofsIsoscelesPropertiesScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-statistics-boxplots-digital-tools|m10-statistics-boxplots|digital-tools|M10StatisticsBoxplotsDigitalToolsScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-statistics-investigations-cycle|m10-statistics-investigations|cycle|M10StatisticsInvestigationsCycleScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
-row="m10-statistics-two-way-build-read|m10-statistics-two-way|build-read|M10StatisticsTwoWayBuildReadScene"
-IFS="|" read -r stem topic lesson cls <<< "$row"
-bash scripts/videos/_render.sh "scripts/videos/${stem}.py" "$cls" "$topic" "$lesson" ql
+
+for row in \
+  "m10-algebra-exponent-laws|negative-zero-indices|M10AlgebraExponentLawsNegativeZeroIndicesScene" \
+  "m10-algebra-binomial|expand-foil|M10AlgebraBinomialExpandFoilScene" \
+  "m10-algebra-formulas|rearrange|M10AlgebraFormulasRearrangeScene" \
+  "m10-algebra-linear-eq|solve|M10AlgebraLinearEqSolveScene" \
+  "m10-algebra-simultaneous|substitution|M10AlgebraSimultaneousSubstitutionScene" \
+  "m10-algebra-gradients|perpendicular|M10AlgebraGradientsPerpendicularScene" \
+  "m10-algebra-linear-fractions|algebraic-denominators|M10AlgebraLinearFractionsAlgebraicDenominatorsScene" \
+  "m10-algebra-modelling|compound-interest|M10AlgebraModellingCompoundInterestScene" \
+  "m10-algebra-quadratics|null-factor-law|M10AlgebraQuadraticsNullFactorLawScene" \
+  "m10-measurement-area-volume|surface-area|M10MeasurementAreaVolumeSurfaceAreaScene" \
+  "m10-measurement-scaling|scale|M10MeasurementScalingScaleScene" \
+  "m10-measurement-trig|elevation-depression|M10MeasurementTrigElevationDepressionScene" \
+  "m10-number-approximations|compound-errors|M10NumberApproximationsCompoundErrorsScene" \
+  "m10-space-proofs|isosceles-properties|M10SpaceProofsIsoscelesPropertiesScene" \
+  "m10-statistics-boxplots|boxplots|M10StatisticsBoxplotsBoxplotsScene" \
+  "m10-statistics-claims|causation-ethics|M10StatisticsClaimsCausationEthicsScene" \
+  "m10-statistics-scatter|interpolation-causation|M10StatisticsScatterInterpolationCausationScene" \
+  "m10-probability-conditional|real-world|M10ProbabilityConditionalRealWorldScene" \
+  "m10-probability-experiments|tree-diagrams|M10ProbabilityExperimentsTreeDiagramsScene"
+do
+  IFS="|" read -r topic lesson cls <<< "$row"
+  bash scripts/videos/_render.sh "scripts/videos/${topic}-${lesson}.py" "$cls" "$topic" "$lesson" ql
+done

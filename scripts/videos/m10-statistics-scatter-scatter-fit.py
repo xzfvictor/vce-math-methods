@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for scatter-fit (m10-statistics-scatter)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `scatter-fit` (topic `m10-statistics-scatter`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how to draw a scatterplot and sketch a line of best fit. First, pick two numerical variables and pair them up, one for each observation. Then decide which one is the explanatory variable — that's the one you think explains the other — and put it on the horizontal axis. The response variable goes on the vertical axis. Now plot each pair as a single dot, and you'll start to see a pattern emerge.\n\nNext comes the line of best fit. It's a straight line that passes as close as possible to all the points, with roughly equal numbers above and below it. You eyeball it through the middle of the cloud. You can use this line to interpolate, which means estimating values that fall between your data points, and that works pretty well. But be careful with extrapolation, which is estimating beyond the range of your data, because the pattern might not hold out there.\n\nWhen you describe the relationship, comment on its strength, direction, and shape. Now let's see it in action."
 
 class M10StatisticsScatterScatterFitScene(Scene):
     def construct(self) -> None:
-        title = Text('Statistics Scatter Scatter Fit', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how to draw a scatterplot and sketch a\nline of best fit. Now plot each pair as a single dot, and you'll start\nto see a pattern emerge. You can use this line to interpolate, which\nmeans estimating values that fall between your data points, and that\nworks pretty well.", 'First, pick two numerical variables and pair them up, one for each\nobservation. Next comes the line of best fit. But be careful with\nextrapolation, which is estimating beyond the range of your data,\nbecause the pattern might not hold out there.', "Then decide which one is the explanatory variable — that's the one you\nthink explains the other — and put it on the horizontal axis. It's a\nstraight line that passes as close as possible to all the points, with\nroughly equal numbers above and below it. When you describe the\nrelationship, comment on its strength, direction, and shape.", "The response variable goes on the vertical axis. You eyeball it through\nthe middle of the cloud. Now let's see it in action."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Scatter and line of best fit',
+            subtitle='Eye-ball a line through the cloud of points.',
+            beats=[
+        [
+            Step(r'''(x, y) pairs''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='scatter', sub_color='ORANGE_TERM', write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''draw a line close to most points''', color='GREEN_OK', scale=1.0, anchor=(0, 0.4, 0.0), sub='fit', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''balance points above and below''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.2, 0.0), sub='balance', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''follow the trend, not the outliers''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='ignore outliers', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''line goes through (\bar{x},\bar{y})''', color='GREEN_OK', scale=0.95, anchor=(0, -1.0, 0.0), sub='mean point', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''slope = \dfrac{\text{rise}}{\text{run}}''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='use the line', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''y = mx + b''', color='GREEN_OK', scale=1.0, anchor=(0, 0.0, 0.0), sub='equation', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{line of best fit: balance above and below}''',
+            takeaway_sub=r'''Draw the line that balances the points above and below; it passes through the mean point.''',
+            audio_seconds=76.3,
+        )

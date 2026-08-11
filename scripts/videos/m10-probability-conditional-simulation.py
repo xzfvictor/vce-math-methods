@@ -1,30 +1,31 @@
-"""Transcript-faithful Manim scene for simulation (m10-probability-conditional)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `simulation` (topic `m10-probability-conditional`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how to estimate probabilities when the maths just gets too messy to solve directly. The trick is simple: instead of calculating, we run a simulation many times and count how often our event happens. So here's the workflow. First, you model the situation using random numbers. For example, if you're flipping a coin, you might say any even digit means heads and any odd digit means tails. Then you run that experiment, say, a thousand or ten thousand times, because the more you repeat it, the more your relative frequency settles down to a stable value. After all those runs, you just count how many times your event of interest occurred, and divide by the total number of trials. That ratio, the count over N, is your empirical probability, and it's a solid estimate of the true probability. This approach is especially handy for counterintuitive puzzles, like the Monty Hall three-door problem, or the birthday problem, where the real answer often surprises people. Now let's see it in action."
 
 class M10ProbabilityConditionalSimulationScene(Scene):
     def construct(self) -> None:
-        title = Text('Probability Conditional Simulation', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how to estimate probabilities when the\nmaths just gets too messy to solve directly. For example, if you're\nflipping a coin, you might say any even digit means heads and any odd\ndigit means tails. This approach is especially handy for\ncounterintuitive puzzles, like the Monty Hall three-door problem, or the\nbirthday problem, where the real answer often surprises people.", "The trick is simple: instead of calculating, we run a simulation many\ntimes and count how often our event happens. Then you run that\nexperiment, say, a thousand or ten thousand times, because the more you\nrepeat it, the more your relative frequency settles down to a stable\nvalue. Now let's see it in action.", "So here's the workflow. After all those runs, you just count how many\ntimes your event of interest occurred, and divide by the total number of\ntrials.", "First, you model the situation using random numbers. That ratio, the\ncount over N, is your empirical probability, and it's a solid estimate\nof the true probability."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Simulate conditional probability',
+            subtitle='Run trials when the formula is too hard.',
+            beats=[
+        [
+            Step(r'''simulate \to estimate''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='method', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.0, pre_wait=0.4)
+        ],
+        [
+            Step(r'''1. draw N random cases''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.2, 0.0), sub='step 1', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''2. count B's, then A inside B''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='step 2', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''3. ratio = P(A|B)''', color='GREEN_OK', scale=0.95, anchor=(0, -1.0, 0.0), sub='step 3', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''more trials \Rightarrow better estimate''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.2, 0.0), sub='law of large numbers', sub_color=None, write_time=1.6, post_wait=1.0, pre_wait=0.4),
+            Step(r'''watch for bias in your model''', color='GREEN_OK', scale=0.9, anchor=(0, 0.0, 0.0), sub='caveat', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{simulate: trials}	o	ext{ratio}''',
+            takeaway_sub=r'''Run many trials; the ratio converges to the conditional probability.''',
+            audio_seconds=82.6,
+        )

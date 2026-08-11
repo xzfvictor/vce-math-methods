@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for digital-tools (m10-statistics-boxplots)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `digital-tools` (topic `m10-statistics-boxplots`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how digital tools can do the heavy lifting when you're comparing distributions with boxplots and histograms. The key idea is simple — let the software crunch the numbers, and you focus on what the picture is telling you.\n\nHere's the workflow. First, enter or load your data into a tool like Excel, Google Sheets, R, or Python. Then ask for the five-number summary or a boxplot, and the software will calculate the median and quartiles for you. If you want to compare two groups, just overlay two boxplots on the same axis so you can see them side by side. And when you want to understand the shape of your data — whether it's symmetric, skewed, or has more than one peak — a histogram is your best friend.\n\nThe most important step is interpretation. Don't get lost in the numbers. Instead, read the story from the picture. Where's the centre? How wide is the spread? Are there any outliers? Is the shape balanced or lopsided?\n\nNow let's see it in action."
 
 class M10StatisticsBoxplotsDigitalToolsScene(Scene):
     def construct(self) -> None:
-        title = Text('Statistics Boxplots Digital Tools', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how digital tools can do the heavy lifting\nwhen you're comparing distributions with boxplots and histograms. Then\nask for the five-number summary or a boxplot, and the software will\ncalculate the median and quartiles for you. Don't get lost in the\nnumbers. Are there any outliers?", 'The key idea is simple — let the software crunch the numbers, and you\nfocus on what the picture is telling you. If you want to compare two\ngroups, just overlay two boxplots on the same axis so you can see them\nside by side. Instead, read the story from the picture. Is the shape\nbalanced or lopsided?', "Here's the workflow. And when you want to understand the shape of your\ndata — whether it's symmetric, skewed, or has more than one peak — a\nhistogram is your best friend. Where's the centre? Now let's see it in\naction.", 'First, enter or load your data into a tool like Excel, Google Sheets, R,\nor Python. The most important step is interpretation. How wide is the\nspread?']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Digital tools for boxplots',
+            subtitle='Spreadsheets and calculators draw them in seconds.',
+            beats=[
+        [
+            Step(r'''spreadsheet / calculator''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='tools', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.0, pre_wait=0.4)
+        ],
+        [
+            Step(r'''1. enter the data''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.2, 0.0), sub='step 1', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''2. ask for quartiles''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='step 2', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''3. insert chart''', color='GREEN_OK', scale=0.95, anchor=(0, -1.0, 0.0), sub='step 3', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''4. choose box plot''', color='GREEN_OK', scale=0.95, anchor=(0, -2.0, 0.0), sub='step 4', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''always check the units on the axis''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.2, 0.0), sub='caveat', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''tools can mis-label outliers''', color='GREEN_OK', scale=0.9, anchor=(0, 0.0, 0.0), sub='sanity check', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{enter data 	o quartiles 	o box plot}''',
+            takeaway_sub=r'''Use a spreadsheet or calculator to find the quartiles, then insert the box plot.''',
+            audio_seconds=78.4,
+        )

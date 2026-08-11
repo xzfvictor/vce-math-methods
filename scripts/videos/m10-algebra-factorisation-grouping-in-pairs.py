@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for grouping-in-pairs (m10-algebra-factorisation)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `grouping-in-pairs` (topic `m10-algebra-factorisation`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at grouping in pairs, a neat trick when no single factor is shared by every term. The idea is simple: instead of forcing one factor out of everything, you regroup the terms into two pairs, and each pair gets its own factor. Here's the recipe. First, re-arrange the terms so that each pair shares something in common. Next, factor each pair separately. Now here's the magic step: those two pair-factors should both contain the same bracket, and you pull that common bracket out front. Whatever's left inside each pair multiplies together to form the second bracket. For example, if you have x times the quantity x plus one, plus two times the same quantity x plus one, the bracket x plus one is shared, so it comes out, leaving x plus two behind. Think of the bracket as a single object you're sliding out. If your pairs don't seem to work at first, try swapping partners, since a different grouping might reveal the matching bracket. Now let's see it in action with a real problem."
 
 class M10AlgebraFactorisationGroupingInPairsScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Factorisation Grouping In Pairs', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at grouping in pairs, a neat trick when no\nsingle factor is shared by every term. Next, factor each pair\nseparately. Think of the bracket as a single object you're sliding out.", "The idea is simple: instead of forcing one factor out of everything, you\nregroup the terms into two pairs, and each pair gets its own factor. Now\nhere's the magic step: those two pair-factors should both contain the\nsame bracket, and you pull that common bracket out front. If your pairs\ndon't seem to work at first, try swapping partners, since a different\ngrouping might reveal the matching bracket.", "Here's the recipe. Whatever's left inside each pair multiplies together\nto form the second bracket. Now let's see it in action with a real\nproblem.", 'First, re-arrange the terms so that each pair shares something in\ncommon. For example, if you have x times the quantity x plus one, plus\ntwo times the same quantity x plus one, the bracket x plus one is\nshared, so it comes out, leaving x plus two behind.']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Grouping in pairs',
+            subtitle='Factor each pair, then pull out the common bracket.',
+            beats=[
+        [
+            Step(r'''x^{2}+3x+xy+3y''', color='BLUE_TERM', scale=1.1, anchor=(0, 1.4, 0.0), sub='four terms', sub_color='ORANGE_TERM', write_time=1.8, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''(x^{2}+3x)+(xy+3y)''', color='ORANGE_TERM', scale=1.05, anchor=(0, 1.4, 0.0), sub='group into pairs', sub_color=None, write_time=1.8, post_wait=1.2, pre_wait=0.4),
+            Step(r'''x(x+3) + y(x+3)''', color='GREEN_OK', scale=1.05, anchor=(0, 0.0, 0.0), sub='factor each pair', sub_color=None, write_time=1.8, post_wait=1.2, pre_wait=0.4),
+            Step(r'''(x+3)(x+y)''', color='GREEN_OK', scale=1.15, anchor=(0, -1.2, 0.0), sub='pull out the common bracket', sub_color=None, write_time=1.8, post_wait=2.0, pre_wait=0.4)
+        ],
+        [
+            Step(r'''ab + 2a + 3b + 6''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='try again', sub_color=None, write_time=1.6, post_wait=1.0, pre_wait=0.4),
+            Step(r'''(ab+2a)+(3b+6)=a(b+2)+3(b+2)''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='common bracket b+2', sub_color=None, write_time=1.8, post_wait=1.2, pre_wait=0.4),
+            Step(r'''(b+2)(a+3)''', color='GREEN_OK', scale=1.1, anchor=(0, -1.2, 0.0), sub='final form', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''a(b+c)+d(b+c) = (a+d)(b+c)''',
+            takeaway_sub=r'''Spot the common bracket across the two pair-factors.''',
+            audio_seconds=81.9,
+        )

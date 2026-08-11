@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for substitute (m10-algebra-formulas)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `substitute` (topic `m10-algebra-formulas`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how to plug numbers into a formula and get the right answer. A formula is just a rule that connects variables, and substitution means swapping those variables for the values you're given. The trick is to follow the order of operations carefully. That means brackets first, then powers like squaring a number, then multiplication and division, and finally addition and subtraction. Your calculator will do this automatically as long as you type the expression in properly, so pay attention to where the brackets go. One more thing, always check the units before you start. If a formula mixes things like kilometres and metres, or hours and minutes, convert everything to the same units first or your answer will be off. Once you've got that sorted, the substitution itself is usually pretty quick. Now let's see it in action with a worked example."
 
 class M10AlgebraFormulasSubstituteScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Formulas Substitute', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how to plug numbers into a formula and get\nthe right answer. Your calculator will do this automatically as long as\nyou type the expression in properly, so pay attention to where the\nbrackets go. Now let's see it in action with a worked example.", "A formula is just a rule that connects variables, and substitution means\nswapping those variables for the values you're given. One more thing,\nalways check the units before you start.", 'The trick is to follow the order of operations carefully. If a formula\nmixes things like kilometres and metres, or hours and minutes, convert\neverything to the same units first or your answer will be off.', "That means brackets first, then powers like squaring a number, then\nmultiplication and division, and finally addition and subtraction. Once\nyou've got that sorted, the substitution itself is usually pretty quick."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Substitute into a formula',
+            subtitle='Replace each letter with its number.',
+            beats=[
+        [
+            Step(r'''P=2(l+w)''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='perimeter of rectangle', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.2, pre_wait=0.4)
+        ],
+        [
+            Step(r'''l=5,\;w=3''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='values', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''P=2(5+3)''', color='ORANGE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='substitute', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''=2(8)=16''', color='GREEN_OK', scale=1.0, anchor=(0, -1.0, 0.0), sub='evaluate', sub_color=None, write_time=1.4, post_wait=1.6, pre_wait=0.4)
+        ],
+        [
+            Step(r'''A=\dfrac{1}{2}bh''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='triangle area', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''b=6,\;h=4''', color='BLUE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='values', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''A=\dfrac{1}{2}\cdot 6\cdot 4 = 12''', color='GREEN_OK', scale=1.0, anchor=(0, -1.2, 0.0), sub='evaluate', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{substitute each letter, then evaluate}''',
+            takeaway_sub=r'''Replace letters with numbers and simplify.''',
+            audio_seconds=68.5,
+        )

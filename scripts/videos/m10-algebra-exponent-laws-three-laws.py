@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for three-laws (m10-algebra-exponent-laws)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `three-laws` (topic `m10-algebra-exponent-laws`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson we'll look at the three fundamental exponent laws you'll use over and over in Methods. Here's the big idea. When you're working with exponents, there are really only three moves you need to remember.\n\nThe first law is the product law. When you multiply two powers that have the same base, you just add the exponents together. So something cubed times something to the fifth gives you something to the eighth, because three plus five is eight.\n\nThe second law is the quotient law. When you divide two powers with the same base, you subtract the exponents. So something to the tenth divided by something to the fourth leaves you with something to the sixth, because ten minus four is six.\n\nThe third law is the power of a power. When you raise a power to another power, you multiply the exponents. So something squared, all raised to the fifth, becomes something to the tenth.\n\nThe good news is, these rules work exactly the same way once you throw algebra into the mix. Just treat the variable as your base and apply the same law. And if there's a coefficient out the front, like two or three, just multiply those together like ordinary numbers. Now let's see it in action."
 
 class M10AlgebraExponentLawsThreeLawsScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Exponent Laws Three Laws', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson we'll look at the three fundamental exponent laws you'll\nuse over and over in Methods. When you multiply two powers that have the\nsame base, you just add the exponents together. So something to the\ntenth divided by something to the fourth leaves you with something to\nthe sixth, because ten minus four is six. The good news is, these rules\nwork exactly the same way once you throw algebra into the mix.", "Here's the big idea. So something cubed times something to the fifth\ngives you something to the eighth, because three plus five is eight. The\nthird law is the power of a power. Just treat the variable as your base\nand apply the same law.", "When you're working with exponents, there are really only three moves\nyou need to remember. The second law is the quotient law. When you raise\na power to another power, you multiply the exponents. And if there's a\ncoefficient out the front, like two or three, just multiply those\ntogether like ordinary numbers.", "The first law is the product law. When you divide two powers with the\nsame base, you subtract the exponents. So something squared, all raised\nto the fifth, becomes something to the tenth. Now let's see it in\naction."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Three exponent laws',
+            subtitle='Product, quotient and power of a power.',
+            beats=[
+        [
+            Step(r'''a^{m}\cdot a^{n}=a^{m+n}''', color='BLUE_TERM', scale=1.0, anchor=(-3.0, 1.2, 0.0), sub='product law', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4),
+            Step(r'''\dfrac{a^{m}}{a^{n}}=a^{m-n}''', color='ORANGE_TERM', scale=1.0, anchor=(3.0, 1.2, 0.0), sub='quotient law', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4),
+            Step(r'''(a^{m})^{n}=a^{mn}''', color='GREEN_OK', scale=1.0, anchor=(0, -0.6, 0.0), sub='power of a power', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''2^{3}\cdot 2^{4} = 2^{7} = 128''', color='BLUE_TERM', scale=1.1, anchor=(0, 1.2, 0.0), sub='3+4=7', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4),
+            Step(r'''\dfrac{5^{6}}{5^{2}} = 5^{4} = 625''', color='ORANGE_TERM', scale=1.1, anchor=(0, -0.4, 0.0), sub='6-2=4', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4)
+        ],
+        [
+            Step(r'''(x^{2})^{3}=x^{6}''', color='GREEN_OK', scale=1.1, anchor=(0, 1.2, 0.0), sub='multiply exponents', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4),
+            Step(r'''x^{2}\cdot x^{3}=x^{5}''', color='GREEN_OK', scale=1.1, anchor=(0, -0.4, 0.0), sub='not x^{6}', sub_color=None, write_time=1.6, post_wait=1.6, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''a^{m+n},\;a^{m-n},\;a^{mn}''',
+            takeaway_sub=r'''Keep the base the same; add, subtract or multiply the exponents.''',
+            audio_seconds=90.1,
+        )

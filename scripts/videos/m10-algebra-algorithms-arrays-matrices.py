@@ -1,30 +1,29 @@
-"""Transcript-faithful Manim scene for arrays-matrices (m10-algebra-algorithms)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `arrays-matrices` (topic `m10-algebra-algorithms`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson we'll look at three really handy data structures that show up everywhere in algorithms. First, arrays. Think of an array as a simple list of values lined up in a row, where each value sits at its own numbered slot starting from zero. You walk through an array using a loop, and arrays are perfect for storing sequences like a list of numbers or names. Next, matrices, which are basically arrays in two dimensions. Imagine a grid with rows and columns, where you reach into any cell by giving its row and column. Matrices aren't just for storing tables though. They're also a way to describe geometric transformations. Multiplying a point by a translation matrix shifts it across the plane, and other matrices can rotate or reflect shapes. Finally, pointers. A pointer doesn't hold a value itself, it just holds the address of another element somewhere in memory. So when you read or write through a pointer, you're really changing that underlying thing. Pointers are what make linked lists, trees, and graphs possible. Now let's see it in action."
 
 class M10AlgebraAlgorithmsArraysMatricesScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Algorithms Arrays Matrices', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson we'll look at three really handy data structures that\nshow up everywhere in algorithms. Next, matrices, which are basically\narrays in two dimensions. Multiplying a point by a translation matrix\nshifts it across the plane, and other matrices can rotate or reflect\nshapes. Pointers are what make linked lists, trees, and graphs possible.", "First, arrays. Imagine a grid with rows and columns, where you reach\ninto any cell by giving its row and column. Finally, pointers. Now let's\nsee it in action.", "Think of an array as a simple list of values lined up in a row, where\neach value sits at its own numbered slot starting from zero. Matrices\naren't just for storing tables though. A pointer doesn't hold a value\nitself, it just holds the address of another element somewhere in\nmemory.", "You walk through an array using a loop, and arrays are perfect for\nstoring sequences like a list of numbers or names. They're also a way to\ndescribe geometric transformations. So when you read or write through a\npointer, you're really changing that underlying thing."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Arrays and matrices',
+            subtitle='A row-by-column grid of numbers.',
+            beats=[
+        [
+            Step(r'''A=\begin{pmatrix}1&2\\3&4\end{pmatrix}''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.4, 0.0), sub='2x2 matrix', sub_color='ORANGE_TERM', write_time=2.0, post_wait=1.4, pre_wait=0.4),
+            Step(r'''A[1,1]=1''', color='ORANGE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='row 1 col 1', sub_color=None, write_time=1.4, post_wait=1.2, pre_wait=0.4),
+            Step(r'''A[2,1]=3''', color='GREEN_OK', scale=1.0, anchor=(0, -1.2, 0.0), sub='row 2 col 1', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''rows=2, cols=2''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='shape', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''list A[1]=[1,2]''', color='ORANGE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='first row', sub_color=None, write_time=1.6, post_wait=1.2, pre_wait=0.4),
+            Step(r'''sum A=1+2+3+4=10''', color='GREEN_OK', scale=1.0, anchor=(0, -1.2, 0.0), sub='sum of all entries', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''A[i,j]	ext{ reads row }i,	ext{ column }j''',
+            takeaway_sub=r'''A matrix is just a grid — row first, column second.''',
+            audio_seconds=87.3,
+        )

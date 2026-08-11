@@ -1,30 +1,33 @@
-"""Transcript-faithful Manim scene for tree-diagrams (m10-probability-experiments)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `tree-diagrams` (topic `m10-probability-experiments`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson we'll look at tree diagrams, a really handy way to picture a chance experiment that happens in two or three steps. Imagine a coin tossed, then a card drawn. Each step is a fork in the road. At every fork, or node, the branches going out all add up to one, because one of those outcomes is certain to happen. Now here's the key idea. To find the chance of any single path through the tree, you multiply the chances along that path. And when you want the chance of reaching some event in different ways, you just add the probabilities of those paths together at the end. The rightmost tips of the tree give you your complete list of outcomes, what's called the sample space, and if you add up all those tip probabilities you'll get exactly one. Think of multiply along the branches, add at the end, and branches from the same fork always sum to one. Got it. Now let's see it in action with a worked example."
 
 class M10ProbabilityExperimentsTreeDiagramsScene(Scene):
     def construct(self) -> None:
-        title = Text('Probability Experiments Tree Diagrams', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson we'll look at tree diagrams, a really handy way to\npicture a chance experiment that happens in two or three steps. Now\nhere's the key idea. Think of multiply along the branches, add at the\nend, and branches from the same fork always sum to one.", 'Imagine a coin tossed, then a card drawn. To find the chance of any\nsingle path through the tree, you multiply the chances along that path.\nGot it.', "Each step is a fork in the road. And when you want the chance of\nreaching some event in different ways, you just add the probabilities of\nthose paths together at the end. Now let's see it in action with a\nworked example.", "At every fork, or node, the branches going out all add up to one,\nbecause one of those outcomes is certain to happen. The rightmost tips\nof the tree give you your complete list of outcomes, what's called the\nsample space, and if you add up all those tip probabilities you'll get\nexactly one."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Tree diagrams with replacement',
+            subtitle='Branches multiply, columns sum.',
+            beats=[
+        [
+            Step(r'''P(heads) = \tfrac{1}{2}, P(tails) = \tfrac{1}{2}''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.4, 0.0), sub='one flip', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.0, pre_wait=0.4)
+        ],
+        [
+            Step(r'''P(HH) = \tfrac{1}{2}\cdot\tfrac{1}{2}=\tfrac{1}{4}''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='two flips', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''P(HT) = \tfrac{1}{4}''', color='ORANGE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='branch', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''P(TH) = \tfrac{1}{4}''', color='GREEN_OK', scale=1.0, anchor=(0, -1.0, 0.0), sub='branch', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''P(TT) = \tfrac{1}{4}''', color='GREEN_OK', scale=1.0, anchor=(0, -2.0, 0.0), sub='branch', sub_color=None, write_time=1.2, post_wait=1.4, pre_wait=0.4),
+            Step(r'''total = 1''', color='GREEN_OK', scale=1.0, anchor=(0, -3.0, 0.0), sub='check', sub_color=None, write_time=1.2, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''3 flips: 2^{3} = 8 leaves''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.2, 0.0), sub='extension', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''each leaf = \tfrac{1}{8}''', color='GREEN_OK', scale=0.9, anchor=(0, 0.0, 0.0), sub='fair', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{multiply along branches, sum down columns}''',
+            takeaway_sub=r'''Multiply along the branches, sum down the columns.''',
+            audio_seconds=75.9,
+        )

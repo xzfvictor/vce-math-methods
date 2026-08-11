@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for surveying-design (m10-measurement-trig)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `surveying-design` (topic `m10-measurement-trig`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how surveyors and designers tackle three‑dimensional problems by breaking them into two simple right triangles. The big idea is decomposition. Instead of staring at a scary 3D shape, you split it into a horizontal footprint and a vertical rise, and each of those becomes its own right‑angled triangle. Step one is the base triangle. You use Pythagoras to find the horizontal distance across the ground. That distance then becomes one of the legs of your second triangle, the height triangle, which sits on top and gives you the vertical rise. You do Pythagoras again, and now you've got the full 3D measurement. A classic example is the smallest box that fits a long rod. The rod is angled through space, and the box just needs to match the rod's shadow on each axis, so its width, depth, and height are exactly the three projections of the rod. Same two‑triangle trick, just done once per direction. Now let's see it in action."
 
 class M10MeasurementTrigSurveyingDesignScene(Scene):
     def construct(self) -> None:
-        title = Text('Measurement Trig Surveying Design', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how surveyors and designers tackle\nthree‑dimensional problems by breaking them into two simple right\ntriangles. You use Pythagoras to find the horizontal distance across the\nground. The rod is angled through space, and the box just needs to match\nthe rod's shadow on each axis, so its width, depth, and height are\nexactly the three projections of the rod.", 'The big idea is decomposition. That distance then becomes one of the\nlegs of your second triangle, the height triangle, which sits on top and\ngives you the vertical rise. Same two‑triangle trick, just done once per\ndirection.', "Instead of staring at a scary 3D shape, you split it into a horizontal\nfootprint and a vertical rise, and each of those becomes its own\nright‑angled triangle. You do Pythagoras again, and now you've got the\nfull 3D measurement. Now let's see it in action.", 'Step one is the base triangle. A classic example is the smallest box\nthat fits a long rod.']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Surveying and design',
+            subtitle='Plan a survey that minimises error and effort.',
+            beats=[
+        [
+            Step(r'''design a survey''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='plan first', sub_color='ORANGE_TERM', write_time=1.2, post_wait=1.0, pre_wait=0.4)
+        ],
+        [
+            Step(r'''1. identify landmarks''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.2, 0.0), sub='step 1', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''2. measure baselines''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='step 2', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''3. measure angles''', color='GREEN_OK', scale=0.95, anchor=(0, -1.0, 0.0), sub='step 3', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''4. triangulate''', color='GREEN_OK', scale=1.0, anchor=(0, -2.0, 0.0), sub='step 4', sub_color=None, write_time=1.2, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''triangulation gives distance via angles''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.2, 0.0), sub='core idea', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''baseline + two angles = full triangle''', color='GREEN_OK', scale=0.9, anchor=(0, 0.0, 0.0), sub='law of sines', sub_color=None, write_time=1.6, post_wait=1.6, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''	ext{two angles + one side = triangle}''',
+            takeaway_sub=r'''Surveying: pick landmarks, measure baseline and angles, then triangulate.''',
+            audio_seconds=78.6,
+        )

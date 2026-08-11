@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for congruent-triangles (m10-space-proofs)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `congruent-triangles` (topic `m10-space-proofs`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = 'Hey there! In this lesson we\'ll look at how to prove two triangles are congruent, which basically means showing they\'re identical in size and shape. The big idea is that you only need a few key pieces of information to lock everything else in. There are four quick tests you can pick from. The first is SSS, where all three pairs of sides match up. Next is SAS, where two sides match and so does the angle sitting right between them. Then there\'s AAS, where two angles match along with a side that\'s not between those angles. And finally RHS, which is for right triangles specifically, and that stands for a right angle, the hypotenuse, and one more side. Here\'s the really cool part: once you\'ve proven two triangles are congruent using any of these tests, you automatically get every other matching length and angle for free, free through a rule called CPCTC, or "corresponding parts of congruent triangles are congruent." So your game plan is simple. First, write down what the diagram already tells you. Then ask yourself which of the four tests fits those clues. Match the corresponding vertices, write your congruence statement, and the missing length or angle basically drops into your lap. Now let\'s see it in action.'
 
 class M10SpaceProofsCongruentTrianglesScene(Scene):
     def construct(self) -> None:
-        title = Text('Space Proofs Congruent Triangles', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ['Hey there! The first is SSS, where all three pairs of sides match up.\nHere\'s the really cool part: once you\'ve proven two triangles are\ncongruent using any of these tests, you automatically get every other\nmatching length and angle for free, free through a rule called CPCTC, or\n"corresponding parts of congruent triangles are congruent." So your game\nplan is simple. Now let\'s see it in action.', "In this lesson we'll look at how to prove two triangles are congruent,\nwhich basically means showing they're identical in size and shape. Next\nis SAS, where two sides match and so does the angle sitting right\nbetween them. First, write down what the diagram already tells you.", "The big idea is that you only need a few key pieces of information to\nlock everything else in. Then there's AAS, where two angles match along\nwith a side that's not between those angles. Then ask yourself which of\nthe four tests fits those clues.", 'There are four quick tests you can pick from. And finally RHS, which is\nfor right triangles specifically, and that stands for a right angle, the\nhypotenuse, and one more side. Match the corresponding vertices, write\nyour congruence statement, and the missing length or angle basically\ndrops into your lap.']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Congruent triangles',
+            subtitle='SSS, SAS, AAS, RHS give matching sides and angles.',
+            beats=[
+        [
+            Step(r'''triangle \cong triangle''', color='BLUE_TERM', scale=1.1, anchor=(0, 1.4, 0.0), sub='congruent', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.2, pre_wait=0.4)
+        ],
+        [
+            Step(r'''SSS: 3 sides match''', color='BLUE_TERM', scale=0.95, anchor=(0, 1.2, 0.0), sub='side-side-side', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''SAS: 2 sides + included angle''', color='ORANGE_TERM', scale=0.95, anchor=(0, 0.0, 0.0), sub='side-angle-side', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''AAS: 2 angles + 1 side''', color='GREEN_OK', scale=0.95, anchor=(0, -1.0, 0.0), sub='angle-angle-side', sub_color=None, write_time=1.2, post_wait=1.0, pre_wait=0.4),
+            Step(r'''RHS: right angle, hypotenuse, side''', color='GREEN_OK', scale=0.95, anchor=(0, -2.0, 0.0), sub='right triangle', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''CPCTC: corresponding parts equal''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='conclusion', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''all corresponding angles equal''', color='GREEN_OK', scale=0.95, anchor=(0, 0.0, 0.0), sub='then sides too', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''\text{SSS, SAS, AAS, RHS}\Rightarrow\triangle\cong\triangle''',
+            takeaway_sub=r'''Match the right combination of sides and angles, then every part matches.''',
+            audio_seconds=100.2,
+        )

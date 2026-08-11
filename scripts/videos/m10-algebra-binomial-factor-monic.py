@@ -1,30 +1,33 @@
-"""Transcript-faithful Manim scene for factor-monic (m10-algebra-binomial)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `factor-monic` (topic `m10-algebra-binomial`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at factorising monic quadratics, which is really just running the FOIL expansion process backwards. You'll start with something like x squared plus b x plus c, and you want to rewrite it as two brackets multiplied together. The trick is to find two numbers that multiply together to give c and at the same time add together to give b. Once you've spotted those two numbers, you simply pop them into the brackets, and you've factored the quadratic. A quick tip on signs: when c is positive, both numbers share the same sign, so they're either both positive if b is positive, or both negative if b is negative. But when c is negative, the numbers must have opposite signs, because only a positive times a negative gives you a negative. Now let's see it in action."
 
 class M10AlgebraBinomialFactorMonicScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Binomial Factor Monic', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at factorising monic quadratics, which is\nreally just running the FOIL expansion process backwards. A quick tip on\nsigns: when c is positive, both numbers share the same sign, so they're\neither both positive if b is positive, or both negative if b is\nnegative.", "You'll start with something like x squared plus b x plus c, and you want\nto rewrite it as two brackets multiplied together. But when c is\nnegative, the numbers must have opposite signs, because only a positive\ntimes a negative gives you a negative.", "The trick is to find two numbers that multiply together to give c and at\nthe same time add together to give b. Now let's see it in action.", "Once you've spotted those two numbers, you simply pop them into the\nbrackets, and you've factored the quadratic."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Factor a monic quadratic',
+            subtitle='Find two numbers that multiply to c and add to b.',
+            beats=[
+        [
+            Step(r'''x^{2}+bx+c''', color='BLUE_TERM', scale=1.1, anchor=(0, 1.4, 0.0), sub='monic quadratic', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.2, pre_wait=0.4)
+        ],
+        [
+            Step(r'''x^{2}+5x+6''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.4, 0.0), sub='worked example', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''\text{find } m,n\text{ with } mn=6,\;m+n=5''', color='ORANGE_TERM', scale=0.9, anchor=(0, 0.0, 0.0), sub='conditions', sub_color=None, write_time=1.6, post_wait=1.2, pre_wait=0.4),
+            Step(r'''m=2,\;n=3''', color='GREEN_OK', scale=1.0, anchor=(0, -1.0, 0.0), sub='2*3=6, 2+3=5', sub_color=None, write_time=1.4, post_wait=1.2, pre_wait=0.4),
+            Step(r'''(x+2)(x+3)''', color='GREEN_OK', scale=1.1, anchor=(0, -2.2, 0.0), sub='factorised', sub_color=None, write_time=1.4, post_wait=1.6, pre_wait=0.4)
+        ],
+        [
+            Step(r'''x^{2}-7x+12''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='negative middle', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''mn=12,\;m+n=-7 \;\Rightarrow\; m=-3,\;n=-4''', color='ORANGE_TERM', scale=0.9, anchor=(0, 0.0, 0.0), sub='both negative', sub_color=None, write_time=1.8, post_wait=1.2, pre_wait=0.4),
+            Step(r'''(x-3)(x-4)''', color='GREEN_OK', scale=1.1, anchor=(0, -1.2, 0.0), sub='factorised', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''x^{2}+bx+c=(x+m)(x+n),\;\;mn=c,\;m+n=b''',
+            takeaway_sub=r'''Two numbers that multiply to c and add to b.''',
+            audio_seconds=65.1,
+        )

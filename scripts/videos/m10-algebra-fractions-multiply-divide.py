@@ -1,30 +1,32 @@
-"""Transcript-faithful Manim scene for multiply-divide (m10-algebra-fractions)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `multiply-divide` (topic `m10-algebra-fractions`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at how to multiply and divide algebraic fractions. First up, multiplying. The rule is simple: multiply the top of the first fraction by the top of the second, and the bottom by the bottom. But here's the trick that saves you a ton of work: always simplify before you multiply. Look across the numerators and denominators, and cancel any common factors you can spot. For example, if you see the same variable on top and bottom, use the exponent laws to cancel them down. Now for dividing. Dividing fractions feels different, but it's actually just multiplying in disguise. You keep the first fraction the same, then flip the second one upside down to get its reciprocal, and finally multiply them together using the same top-times-top, bottom-times-bottom rule. So in short: multiply straight across after cancelling, and divide by flipping the second fraction first. Now let's see it in action with a worked example."
 
 class M10AlgebraFractionsMultiplyDivideScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Fractions Multiply Divide', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at how to multiply and divide algebraic\nfractions. Look across the numerators and denominators, and cancel any\ncommon factors you can spot. You keep the first fraction the same, then\nflip the second one upside down to get its reciprocal, and finally\nmultiply them together using the same top-times-top, bottom-times-bottom\nrule.", 'First up, multiplying. For example, if you see the same variable on top\nand bottom, use the exponent laws to cancel them down. So in short:\nmultiply straight across after cancelling, and divide by flipping the\nsecond fraction first.', "The rule is simple: multiply the top of the first fraction by the top of\nthe second, and the bottom by the bottom. Now for dividing. Now let's\nsee it in action with a worked example.", "But here's the trick that saves you a ton of work: always simplify\nbefore you multiply. Dividing fractions feels different, but it's\nactually just multiplying in disguise."]
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Multiply and divide fractions',
+            subtitle='Multiply across; flip the divisor when dividing.',
+            beats=[
+        [
+            Step(r'''\dfrac{a}{b}\cdot\dfrac{c}{d}=\dfrac{ac}{bd}''', color='BLUE_TERM', scale=1.0, anchor=(-3.0, 1.2, 0.0), sub='multiply', sub_color=None, write_time=1.6, post_wait=1.2, pre_wait=0.4),
+            Step(r'''\dfrac{a}{b}\div\dfrac{c}{d}=\dfrac{a}{b}\cdot\dfrac{d}{c}''', color='ORANGE_TERM', scale=1.0, anchor=(3.0, 1.2, 0.0), sub='flip and multiply', sub_color=None, write_time=1.8, post_wait=1.2, pre_wait=0.4)
+        ],
+        [
+            Step(r'''\dfrac{2}{3}\cdot\dfrac{5}{7}=\dfrac{10}{21}''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='basic example', sub_color=None, write_time=1.4, post_wait=1.2, pre_wait=0.4),
+            Step(r'''\dfrac{3x}{4}\cdot\dfrac{8}{9x}=\dfrac{24x}{36x}=\dfrac{2}{3}''', color='GREEN_OK', scale=1.0, anchor=(0, -0.4, 0.0), sub='cancel before multiplying', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4),
+            Step(r'''\dfrac{x^{2}}{y}\div\dfrac{x}{y^{2}}=\dfrac{x^{2}}{y}\cdot\dfrac{y^{2}}{x}=xy''', color='GREEN_OK', scale=1.0, anchor=(0, -1.2, 0.0), sub='division', sub_color=None, write_time=2.0, post_wait=1.6, pre_wait=0.4)
+        ],
+        [
+            Step(r'''\dfrac{1}{x}\div\dfrac{1}{x}=1''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='reciprocal of itself', sub_color='GREEN_OK', write_time=1.4, post_wait=1.2, pre_wait=0.4),
+            Step(r'''\dfrac{a/b}{c/d}=\dfrac{a}{b}\cdot\dfrac{d}{c}=\dfrac{ad}{bc}''', color='GREEN_OK', scale=1.0, anchor=(0, -0.4, 0.0), sub='generalised rule', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''\dfrac{a}{b}\cdot\dfrac{c}{d}=\dfrac{ac}{bd},\;\;\dfrac{a}{b}\div\dfrac{c}{d}=\dfrac{ad}{bc}''',
+            takeaway_sub=r'''Cancel common factors first, then multiply numerators and denominators.''',
+            audio_seconds=79.4,
+        )

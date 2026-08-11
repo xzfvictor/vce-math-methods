@@ -1,30 +1,31 @@
-"""Transcript-faithful Manim scene for compound-interest (m10-algebra-modelling)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `compound-interest` (topic `m10-algebra-modelling`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at compound interest and how it connects to growth and decay models. The big idea is that when you keep adding a percentage onto an amount, and then add that percentage onto the new total, and so on, the value speeds up over time, and that's called compound growth. We write it as the starting amount times one plus the rate, raised to the power of how many periods have passed. So if you start with a thousand dollars and earn five percent each year, after one year you have a thousand times one point zero five, after two years you multiply by one point zero five again, and so on.\n\nThis same form shows up everywhere, so we call it the general growth and decay model, written as y equals a times b to the power of x. Here, a is your starting amount, and b is the growth factor. If b is bigger than one, the quantity grows. If b is between zero and one, the quantity decays, because multiplying by a fraction keeps shrinking it.\n\nA really useful idea in decay problems is half-life, which is just the time it takes for the amount to drop to half of what it was before. You spot it when b equals one half. Now let's see it in action."
 
 class M10AlgebraModellingCompoundInterestScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Modelling Compound Interest', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at compound interest and how it connects to\ngrowth and decay models. This same form shows up everywhere, so we call\nit the general growth and decay model, written as y equals a times b to\nthe power of x. A really useful idea in decay problems is half-life,\nwhich is just the time it takes for the amount to drop to half of what\nit was before.", "The big idea is that when you keep adding a percentage onto an amount,\nand then add that percentage onto the new total, and so on, the value\nspeeds up over time, and that's called compound growth. Here, a is your\nstarting amount, and b is the growth factor. You spot it when b equals\none half.", "We write it as the starting amount times one plus the rate, raised to\nthe power of how many periods have passed. If b is bigger than one, the\nquantity grows. Now let's see it in action.", 'So if you start with a thousand dollars and earn five percent each year,\nafter one year you have a thousand times one point zero five, after two\nyears you multiply by one point zero five again, and so on. If b is\nbetween zero and one, the quantity decays, because multiplying by a\nfraction keeps shrinking it.']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Compound interest model',
+            subtitle='Balance grows by a fixed percentage each period.',
+            beats=[
+        [
+            Step(r'''A = P(1+r)^{n}''', color='BLUE_TERM', scale=1.1, anchor=(0, 1.4, 0.0), sub='compound interest', sub_color='ORANGE_TERM', write_time=1.4, post_wait=1.2, pre_wait=0.4)
+        ],
+        [
+            Step(r'''P=1000,\;r=0.05,\;n=3''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='values', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''A=1000(1.05)^{3}''', color='ORANGE_TERM', scale=1.0, anchor=(0, 0.0, 0.0), sub='substitute', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''A=1000(1.1576)\approx 1157.6''', color='GREEN_OK', scale=0.95, anchor=(0, -1.2, 0.0), sub='evaluate', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''interest is added each period''', color='BLUE_TERM', scale=0.9, anchor=(0, 1.2, 0.0), sub='vs simple interest', sub_color=None, write_time=1.6, post_wait=1.0, pre_wait=0.4),
+            Step(r'''growth accelerates''', color='GREEN_OK', scale=0.9, anchor=(0, -0.4, 0.0), sub='exponential curve', sub_color=None, write_time=1.4, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''A=P(1+r)^{n}''',
+            takeaway_sub=r'''Each period the balance is multiplied by (1 + rate), not just added.''',
+            audio_seconds=97.0,
+        )

@@ -1,30 +1,33 @@
-"""Transcript-faithful Manim scene for negative-zero-indices (m10-algebra-exponent-laws)."""
-from manim import *
-from _common import BAND_CHART_CENTER, BAND_TITLE, GREEN_OK, beat_group
+"""Manim scene for lesson `negative-zero-indices` (topic `m10-algebra-exponent-laws`)."""
+import sys
+sys.path.insert(0, '/home/victor/maths-decoded/scripts/videos')
+from _lesson_helpers import Step, build_lesson_scene, BLUE_TERM, ORANGE_TERM, GREEN_OK, RED_REJECT
+from manim import Scene
 
-SCRIPT = "In this lesson, we'll look at two final exponent rules that tie everything together: what happens when the power is zero, and what happens when it's negative. First up, the zero index. Any non-zero number raised to the power of zero equals one. So five to the zero is one, negative three to the zero is one, even something like x plus one all to the power of zero is one. It feels weird, but here's why it makes sense. If you divide any number by itself, the quotient law says you subtract the powers, giving a zero on top. But anything divided by itself is just one, so the result has to be one. Now the negative index. A negative power flips the term upside down into a fraction. So three to the negative two becomes one over three squared, which is one ninth. And x to the negative three becomes one over x cubed. Again, the quotient law explains it. If the bottom power is bigger than the top, subtracting gives you a negative answer, and the leftover on top becomes one over the leftover on the bottom. So remember, zero gives you one, and negative sends it downstairs. Now let's see it in action."
 
 class M10AlgebraExponentLawsNegativeZeroIndicesScene(Scene):
     def construct(self) -> None:
-        title = Text('Algebra Exponent Laws Negative Zero Indices', font_size=38).move_to(BAND_TITLE)
-        subtitle = Text("Follow the narration, then try the idea yourself.", font_size=22).next_to(title, DOWN, buff=0.35)
-        self.add(title, subtitle)
-        self.wait(1.0)
-        sections = ["In this lesson, we'll look at two final exponent rules that tie\neverything together: what happens when the power is zero, and what\nhappens when it's negative. It feels weird, but here's why it makes\nsense. A negative power flips the term upside down into a fraction. If\nthe bottom power is bigger than the top, subtracting gives you a\nnegative answer, and the leftover on top becomes one over the leftover\non the bottom.", 'First up, the zero index. If you divide any number by itself, the\nquotient law says you subtract the powers, giving a zero on top. So\nthree to the negative two becomes one over three squared, which is one\nninth. So remember, zero gives you one, and negative sends it\ndownstairs.', "Any non-zero number raised to the power of zero equals one. But anything\ndivided by itself is just one, so the result has to be one. And x to the\nnegative three becomes one over x cubed. Now let's see it in action.", 'So five to the zero is one, negative three to the zero is one, even\nsomething like x plus one all to the power of zero is one. Now the\nnegative index. Again, the quotient law explains it.']
-        for words in sections:
-            beat = Text(words, font_size=24, line_spacing=0.8)
-            if beat.width > 10.5:
-                beat.set_width(10.5)
-            beat.move_to(BAND_CHART_CENTER)
-            bg = BackgroundRectangle(beat, color=BLACK, fill_opacity=1, buff=0.28)
-            bg.move_to(beat.get_center())
-            card = beat_group(bg, beat)
-            self.add(card)
-            self.wait(2.0)
-            self.remove(card)
-        final = Text("Key idea", font_size=32, color=GREEN_OK).move_to(DOWN * 1.7)
-        final_bg = BackgroundRectangle(final, color=BLACK, fill_opacity=1, buff=0.25)
-        final_bg.move_to(final.get_center())
-        final_box = SurroundingRectangle(final, color=GREEN_OK, buff=0.3)
-        self.add(final_bg, final, final_box)
-        self.wait(95)
+        build_lesson_scene(
+            self,
+            title='Negative and zero indices',
+            subtitle='Flip the term over when the exponent is negative.',
+            beats=[
+        [
+            Step(r'''a^{0}=1''', color='BLUE_TERM', scale=1.1, anchor=(-3.0, 1.2, 0.0), sub='anything^0 = 1', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4),
+            Step(r'''a^{-n}=\dfrac{1}{a^{n}}''', color='ORANGE_TERM', scale=1.1, anchor=(3.0, 1.2, 0.0), sub='negative flips', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4),
+            Step(r'''a^{m-n}=\dfrac{a^{m}}{a^{n}}''', color='GREEN_OK', scale=0.95, anchor=(0, -0.4, 0.0), sub='subtract or divide', sub_color=None, write_time=1.8, post_wait=1.4, pre_wait=0.4)
+        ],
+        [
+            Step(r'''2^{0}=1''', color='BLUE_TERM', scale=1.0, anchor=(-3.0, 1.2, 0.0), sub='example', sub_color=None, write_time=1.4, post_wait=1.0, pre_wait=0.4),
+            Step(r'''5^{-2}=\dfrac{1}{5^{2}}=\dfrac{1}{25}''', color='ORANGE_TERM', scale=0.95, anchor=(3.0, 1.2, 0.0), sub='example', sub_color=None, write_time=1.8, post_wait=1.6, pre_wait=0.4),
+            Step(r'''\dfrac{2^{3}}{2^{5}}=\dfrac{1}{2^{2}}=\dfrac{1}{4}''', color='GREEN_OK', scale=0.95, anchor=(0, -0.4, 0.0), sub='rewrite with positive exponent', sub_color=None, write_time=2.0, post_wait=1.8, pre_wait=0.4)
+        ],
+        [
+            Step(r'''x^{-2}=x^{2}\;\;\text{(wrong)}''', color='BLUE_TERM', scale=1.0, anchor=(0, 1.2, 0.0), sub='negative sign matters', sub_color='ORANGE_TERM', write_time=1.6, post_wait=1.4, pre_wait=0.4),
+            Step(r'''x^{-2}=\dfrac{1}{x^{2}}''', color='GREEN_OK', scale=1.1, anchor=(0, -0.4, 0.0), sub='flips to the denominator', sub_color=None, write_time=1.6, post_wait=1.4, pre_wait=0.4)
+        ]
+    ],
+            takeaway_eq=r'''a^{0}=1,\qquad a^{-n}=\dfrac{1}{a^{n}}''',
+            takeaway_sub=r'''Move a negative-exponent term to the denominator and flip its sign.''',
+            audio_seconds=92.8,
+        )

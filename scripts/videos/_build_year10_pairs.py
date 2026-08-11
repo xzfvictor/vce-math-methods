@@ -1,0 +1,668 @@
+#!/usr/bin/env python3
+"""Generate the Year 10 Manim scene files from the SCENES dict.
+
+Each scene is written as a Python source file. Math text is wrapped in
+raw strings so the LaTeX backslashes are preserved without doubling.
+"""
+from __future__ import annotations
+from pathlib import Path
+import textwrap
+
+ROOT = Path("/home/victor/maths-decoded")
+OUT = ROOT / "scripts/videos"
+
+
+# (title, subtitle, beats, takeaway_eq, takeaway_sub, audio_seconds)
+SCENES: dict[str, tuple] = {
+    # m10-algebra-factorisation
+    "m10-algebra-factorisation/common-factor": (
+        "Common factor",
+        "Pull the greatest thing out the front.",
+        [
+            [("6x^{2} + 9x", "BLUE_TERM", 1.05, (-3.0, 1.3, 0.0), "two terms", "ORANGE_TERM", 1.6, 1.2),
+             (r"\text{GCD}(6,9)=3", "ORANGE_TERM", 0.95, (3.0, 1.3, 0.0), "numerical part", None, 1.6, 1.2),
+             (r"\text{lowest power of } x = x", "GREEN_OK", 0.9, (-3.0, -0.4, 0.0), "variable part", None, 1.8, 1.2),
+             (r"\text{GCF} = 3x", "GREEN_OK", 1.1, (3.0, -0.4, 0.0), "combine", None, 1.6, 1.4)],
+            [(r"6x^{2} + 9x = 3x(2x + 3)", "GREEN_OK", 1.2, (0, 1.2, 0.0), "pull 3x out the front", "BLUE_TERM", 2.0, 2.0),
+             (r"\dfrac{6x^{2}}{3x}=2x,\;\dfrac{9x}{3x}=3", "ORANGE_TERM", 0.9, (0, -0.4, 0.0), "divide each term", None, 1.8, 1.6)],
+            [(r"3(2x+3) \;\neq\; 3x(2x+3)", "RED_REJECT", 1.0, (0, 1.2, 0.0), "missing the variable x", "BLUE_TERM", 1.6, 1.2),
+             (r"\text{always include }x\text{ if every term has }x", "GREEN_OK", 0.85, (0, -0.4, 0.0), "rule", None, 1.6, 1.6)],
+        ],
+        r"ab+ac=a(b+c)",
+        "Pull out the greatest common factor; expand to check.",
+        99.6,
+    ),
+    "m10-algebra-factorisation/grouping-in-pairs": (
+        "Grouping in pairs",
+        "Factor each pair, then pull out the common bracket.",
+        [
+            [(r"x^{2}+3x+xy+3y", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "four terms", "ORANGE_TERM", 1.8, 1.4)],
+            [(r"(x^{2}+3x)+(xy+3y)", "ORANGE_TERM", 1.05, (0, 1.4, 0.0), "group into pairs", None, 1.8, 1.2),
+             (r"x(x+3) + y(x+3)", "GREEN_OK", 1.05, (0, 0.0, 0.0), "factor each pair", None, 1.8, 1.2),
+             (r"(x+3)(x+y)", "GREEN_OK", 1.15, (0, -1.2, 0.0), "pull out the common bracket", None, 1.8, 2.0)],
+            [(r"ab + 2a + 3b + 6", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "try again", None, 1.6, 1.0),
+             (r"(ab+2a)+(3b+6)=a(b+2)+3(b+2)", "ORANGE_TERM", 0.95, (0, 0.0, 0.0), "common bracket b+2", None, 1.8, 1.2),
+             (r"(b+2)(a+3)", "GREEN_OK", 1.1, (0, -1.2, 0.0), "final form", None, 1.6, 1.4)],
+        ],
+        r"a(b+c)+d(b+c) = (a+d)(b+c)",
+        "Spot the common bracket across the two pair-factors.",
+        81.9,
+    ),
+    "m10-algebra-exponent-laws/three-laws": (
+        "Three exponent laws",
+        "Product, quotient and power of a power.",
+        [
+            [(r"a^{m}\cdot a^{n}=a^{m+n}", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "product law", None, 1.8, 1.4),
+             (r"\dfrac{a^{m}}{a^{n}}=a^{m-n}", "ORANGE_TERM", 1.0, (3.0, 1.2, 0.0), "quotient law", None, 1.8, 1.4),
+             (r"(a^{m})^{n}=a^{mn}", "GREEN_OK", 1.0, (0, -0.6, 0.0), "power of a power", None, 1.8, 1.4)],
+            [(r"2^{3}\cdot 2^{4} = 2^{7} = 128", "BLUE_TERM", 1.1, (0, 1.2, 0.0), "3+4=7", None, 1.8, 1.6),
+             (r"\dfrac{5^{6}}{5^{2}} = 5^{4} = 625", "ORANGE_TERM", 1.1, (0, -0.4, 0.0), "6-2=4", None, 1.8, 1.6)],
+            [(r"(x^{2})^{3}=x^{6}", "GREEN_OK", 1.1, (0, 1.2, 0.0), "multiply exponents", None, 1.8, 1.6),
+             (r"x^{2}\cdot x^{3}=x^{5}", "GREEN_OK", 1.1, (0, -0.4, 0.0), "not x^{6}", None, 1.6, 1.6)],
+        ],
+        r"a^{m+n},\;a^{m-n},\;a^{mn}",
+        "Keep the base the same; add, subtract or multiply the exponents.",
+        90.1,
+    ),
+    "m10-algebra-exponent-laws/negative-zero-indices": (
+        "Negative and zero indices",
+        "Flip the term over when the exponent is negative.",
+        [
+            [(r"a^{0}=1", "BLUE_TERM", 1.1, (-3.0, 1.2, 0.0), "anything^0 = 1", None, 1.6, 1.4),
+             (r"a^{-n}=\dfrac{1}{a^{n}}", "ORANGE_TERM", 1.1, (3.0, 1.2, 0.0), "negative flips", None, 1.8, 1.4),
+             (r"a^{m-n}=\dfrac{a^{m}}{a^{n}}", "GREEN_OK", 0.95, (0, -0.4, 0.0), "subtract or divide", None, 1.8, 1.4)],
+            [(r"2^{0}=1", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "example", None, 1.4, 1.0),
+             (r"5^{-2}=\dfrac{1}{5^{2}}=\dfrac{1}{25}", "ORANGE_TERM", 0.95, (3.0, 1.2, 0.0), "example", None, 1.8, 1.6),
+             (r"\dfrac{2^{3}}{2^{5}}=\dfrac{1}{2^{2}}=\dfrac{1}{4}", "GREEN_OK", 0.95, (0, -0.4, 0.0), "rewrite with positive exponent", None, 2.0, 1.8)],
+            [(r"x^{-2}=x^{2}\;\;\text{(wrong)}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "negative sign matters", "ORANGE_TERM", 1.6, 1.4),
+             (r"x^{-2}=\dfrac{1}{x^{2}}", "GREEN_OK", 1.1, (0, -0.4, 0.0), "flips to the denominator", None, 1.6, 1.4)],
+        ],
+        r"a^{0}=1,\qquad a^{-n}=\dfrac{1}{a^{n}}",
+        "Move a negative-exponent term to the denominator and flip its sign.",
+        92.8,
+    ),
+    "m10-algebra-exponent-laws/combined-applications": (
+        "Combined index laws",
+        "Apply product, quotient and power-of-power in order.",
+        [
+            [(r"\dfrac{(2x)^{3}}{x^{2}}\cdot \dfrac{1}{x}", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "the question", None, 1.8, 1.0)],
+            [(r"(2x)^{3}=2^{3}x^{3}=8x^{3}", "ORANGE_TERM", 1.0, (0, 1.4, 0.0), "expand power-of-power", None, 1.8, 1.4),
+             (r"x^{2}\cdot x = x^{3}", "GREEN_OK", 1.0, (0, 0.0, 0.0), "denominator: add exponents", None, 1.8, 1.4),
+             (r"\dfrac{8x^{3}}{x^{3}} = 8", "GREEN_OK", 1.1, (0, -1.2, 0.0), "the x's cancel", None, 1.8, 1.6)],
+            [(r"\dfrac{4a^{2}}{2a}", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "try this one", None, 1.6, 1.0),
+             ("=2a", "GREEN_OK", 1.1, (3.0, 1.2, 0.0), "4/2 = 2, a^2/a = a", None, 1.4, 1.6)],
+        ],
+        r"a^{m}\cdot a^{n}=a^{m+n},\;\;a^{m}/a^{n}=a^{m-n}",
+        "Apply one law at a time and cancel common terms.",
+        73.5,
+    ),
+    "m10-algebra-fractions/add-subtract": (
+        "Algebraic fractions",
+        "Find a common denominator, then add or subtract.",
+        [
+            [("add and subtract fractions", "ORANGE_TERM", 0.9, (0, 1.3, 0.0), "rule", "BLUE_TERM", 1.4, 1.0)],
+            [(r"\dfrac{3}{x}+\dfrac{5}{x}=\dfrac{3+5}{x}=\dfrac{8}{x}", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "same denominator", None, 1.8, 1.4),
+             (r"\dfrac{2}{x}+\dfrac{3}{2x}=\dfrac{4+3}{2x}=\dfrac{7}{2x}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "denominator doubled", None, 2.0, 1.4),
+             (r"\dfrac{4}{x+1}-\dfrac{2}{x+1}=\dfrac{2}{x+1}", "GREEN_OK", 1.0, (0, -1.2, 0.0), "subtract", None, 1.8, 1.6)],
+            [(r"\dfrac{2}{x}+\dfrac{3}{x+1}\;(\text{not }\dfrac{5}{x})", "BLUE_TERM", 0.95, (0, 1.2, 0.0), "different denominators", "GREEN_OK", 1.8, 1.4),
+             (r"=\dfrac{2(x+1)+3x}{x(x+1)}=\dfrac{5x+2}{x(x+1)}", "GREEN_OK", 0.95, (0, -0.4, 0.0), "expand and combine", None, 2.0, 1.6)],
+        ],
+        r"\dfrac{a}{d}\pm\dfrac{b}{d}=\dfrac{a\pm b}{d}",
+        "Match denominators, then add or subtract numerators.",
+        86.8,
+    ),
+    "m10-algebra-fractions/multiply-divide": (
+        "Multiply and divide fractions",
+        "Multiply across; flip the divisor when dividing.",
+        [
+            [(r"\dfrac{a}{b}\cdot\dfrac{c}{d}=\dfrac{ac}{bd}", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "multiply", None, 1.6, 1.2),
+             (r"\dfrac{a}{b}\div\dfrac{c}{d}=\dfrac{a}{b}\cdot\dfrac{d}{c}", "ORANGE_TERM", 1.0, (3.0, 1.2, 0.0), "flip and multiply", None, 1.8, 1.2)],
+            [(r"\dfrac{2}{3}\cdot\dfrac{5}{7}=\dfrac{10}{21}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "basic example", None, 1.4, 1.2),
+             (r"\dfrac{3x}{4}\cdot\dfrac{8}{9x}=\dfrac{24x}{36x}=\dfrac{2}{3}", "GREEN_OK", 1.0, (0, -0.4, 0.0), "cancel before multiplying", None, 1.8, 1.6),
+             (r"\dfrac{x^{2}}{y}\div\dfrac{x}{y^{2}}=\dfrac{x^{2}}{y}\cdot\dfrac{y^{2}}{x}=xy", "GREEN_OK", 1.0, (0, -1.2, 0.0), "division", None, 2.0, 1.6)],
+            [(r"\dfrac{1}{x}\div\dfrac{1}{x}=1", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "reciprocal of itself", "GREEN_OK", 1.4, 1.2),
+             (r"\dfrac{a/b}{c/d}=\dfrac{a}{b}\cdot\dfrac{d}{c}=\dfrac{ad}{bc}", "GREEN_OK", 1.0, (0, -0.4, 0.0), "generalised rule", None, 1.8, 1.6)],
+        ],
+        r"\dfrac{a}{b}\cdot\dfrac{c}{d}=\dfrac{ac}{bd},\;\;\dfrac{a}{b}\div\dfrac{c}{d}=\dfrac{ad}{bc}",
+        "Cancel common factors first, then multiply numerators and denominators.",
+        79.4,
+    ),
+    "m10-algebra-binomial/expand-foil": (
+        "Expand with FOIL",
+        "First, Outer, Inner, Last.",
+        [
+            [("(x+2)(x+3)", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "two binomials", "ORANGE_TERM", 1.4, 1.2)],
+            [("F: x\\cdot x = x^{2}", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "first", None, 1.4, 1.0),
+             ("O: x\\cdot 3 = 3x", "ORANGE_TERM", 1.0, (-1.0, 1.2, 0.0), "outer", None, 1.2, 1.0),
+             ("I: 2\\cdot x = 2x", "ORANGE_TERM", 1.0, (1.0, 1.2, 0.0), "inner", None, 1.2, 1.0),
+             ("L: 2\\cdot 3 = 6", "BLUE_TERM", 1.0, (3.0, 1.2, 0.0), "last", None, 1.2, 1.0),
+             ("x^{2}+5x+6", "GREEN_OK", 1.1, (0, -0.4, 0.0), "combine like terms", None, 1.6, 1.6)],
+            [("(2x+3)(x-4)", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "try this", None, 1.4, 1.0),
+             ("=2x^{2}-8x+3x-12", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "apply FOIL", None, 1.6, 1.2),
+             ("=2x^{2}-5x-12", "GREEN_OK", 1.0, (0, -1.2, 0.0), "combine", None, 1.4, 1.4)],
+        ],
+        "(a+b)(c+d)=ac+ad+bc+bd",
+        "FOIL — first, outer, inner, last.",
+        83.4,
+    ),
+    "m10-algebra-binomial/factor-monic": (
+        "Factor a monic quadratic",
+        "Find two numbers that multiply to c and add to b.",
+        [
+            [("x^{2}+bx+c", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "monic quadratic", "ORANGE_TERM", 1.4, 1.2)],
+            [("x^{2}+5x+6", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "worked example", None, 1.4, 1.0),
+             ("\\text{find } m,n\\text{ with } mn=6,\\;m+n=5", "ORANGE_TERM", 0.9, (0, 0.0, 0.0), "conditions", None, 1.6, 1.2),
+             ("m=2,\\;n=3", "GREEN_OK", 1.0, (0, -1.0, 0.0), "2*3=6, 2+3=5", None, 1.4, 1.2),
+             ("(x+2)(x+3)", "GREEN_OK", 1.1, (0, -2.2, 0.0), "factorised", None, 1.4, 1.6)],
+            [("x^{2}-7x+12", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "negative middle", None, 1.4, 1.0),
+             ("mn=12,\\;m+n=-7 \\;\\Rightarrow\\; m=-3,\\;n=-4", "ORANGE_TERM", 0.9, (0, 0.0, 0.0), "both negative", None, 1.8, 1.2),
+             ("(x-3)(x-4)", "GREEN_OK", 1.1, (0, -1.2, 0.0), "factorised", None, 1.4, 1.4)],
+        ],
+        "x^{2}+bx+c=(x+m)(x+n),\;\;mn=c,\;m+n=b",
+        "Two numbers that multiply to c and add to b.",
+        65.1,
+    ),
+    "m10-algebra-binomial/difference-of-squares": (
+        "Difference of squares",
+        "Square minus square factors instantly.",
+        [
+            [("a^{2}-b^{2}", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "two perfect squares, minus", "ORANGE_TERM", 1.4, 1.2)],
+            [("x^{2}-9", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "example", None, 1.4, 1.0),
+             ("=x^{2}-3^{2}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "write as squares", None, 1.4, 1.0),
+             ("=(x+3)(x-3)", "GREEN_OK", 1.1, (0, -1.2, 0.0), "drop out", None, 1.4, 1.6)],
+            [("4x^{2}-25", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "with a coefficient", None, 1.4, 1.0),
+             ("=(2x)^{2}-5^{2}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "recognise squares", None, 1.4, 1.0),
+             ("=(2x+5)(2x-5)", "GREEN_OK", 1.1, (0, -1.2, 0.0), "factorised", None, 1.4, 1.4)],
+        ],
+        "a^{2}-b^{2}=(a+b)(a-b)",
+        "Spot two squares being subtracted — answer drops out instantly.",
+        78.0,
+    ),
+    "m10-algebra-formulas/substitute": (
+        "Substitute into a formula",
+        "Replace each letter with its number.",
+        [
+            [("P=2(l+w)", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "perimeter of rectangle", "ORANGE_TERM", 1.4, 1.2)],
+            [("l=5,\\;w=3", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "values", None, 1.4, 1.0),
+             ("P=2(5+3)", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "substitute", None, 1.4, 1.0),
+             ("=2(8)=16", "GREEN_OK", 1.0, (0, -1.0, 0.0), "evaluate", None, 1.4, 1.6)],
+            [("A=\\dfrac{1}{2}bh", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "triangle area", None, 1.4, 1.0),
+             ("b=6,\\;h=4", "BLUE_TERM", 1.0, (0, 0.0, 0.0), "values", None, 1.4, 1.0),
+             ("A=\\dfrac{1}{2}\\cdot 6\\cdot 4 = 12", "GREEN_OK", 1.0, (0, -1.2, 0.0), "evaluate", None, 1.6, 1.4)],
+        ],
+        "\text{substitute each letter, then evaluate}",
+        "Replace letters with numbers and simplify.",
+        68.5,
+    ),
+    "m10-algebra-formulas/rearrange": (
+        "Rearrange a formula",
+        "Move letters to the side you want.",
+        [
+            [("A=lw", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "rectangle area", "ORANGE_TERM", 1.4, 1.2)],
+            [("l=\\dfrac{A}{w}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "solve for l", None, 1.4, 1.0),
+             ("w=\\dfrac{A}{l}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "solve for w", None, 1.4, 1.0),
+             ("A/w = l", "GREEN_OK", 0.9, (0, -1.2, 0.0), "check by substitution", None, 1.4, 1.4)],
+            [("v=u+at", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "velocity", None, 1.4, 1.0),
+             ("a=\\dfrac{v-u}{t}", "GREEN_OK", 1.0, (0, -0.4, 0.0), "solve for a", None, 1.6, 1.4),
+             ("t=\\dfrac{v-u}{a}", "GREEN_OK", 1.0, (0, -1.6, 0.0), "solve for t", None, 1.6, 1.4)],
+        ],
+        "\text{apply inverse operations to isolate the letter}",
+        "Use inverse operations to bring the letter to one side.",
+        80.7,
+    ),
+    "m10-algebra-algorithms/arrays-matrices": (
+        "Arrays and matrices",
+        "A row-by-column grid of numbers.",
+        [
+            [("A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}", "BLUE_TERM", 0.9, (0, 1.4, 0.0), "2x2 matrix", "ORANGE_TERM", 2.0, 1.4),
+             ("A[1,1]=1", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "row 1 col 1", None, 1.4, 1.2),
+             ("A[2,1]=3", "GREEN_OK", 1.0, (0, -1.2, 0.0), "row 2 col 1", None, 1.4, 1.4)],
+            [("rows=2, cols=2", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "shape", None, 1.4, 1.0),
+             ("list A[1]=[1,2]", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "first row", None, 1.6, 1.2),
+             ("sum A=1+2+3+4=10", "GREEN_OK", 1.0, (0, -1.2, 0.0), "sum of all entries", None, 1.6, 1.4)],
+        ],
+        "A[i,j]\text{ reads row }i,\text{ column }j",
+        "A matrix is just a grid — row first, column second.",
+        87.3,
+    ),
+    "m10-algebra-algorithms/pointers": (
+        "Pointers and references",
+        "An address that points to a value in memory.",
+        [
+            [("x=10", "BLUE_TERM", 1.0, (-3.0, 1.2, 0.0), "x holds the value 10", None, 1.4, 1.0),
+             ("p=&x", "ORANGE_TERM", 1.0, (3.0, 1.2, 0.0), "p points to x", None, 1.4, 1.0),
+             ("*p=10", "GREEN_OK", 1.0, (0, -0.2, 0.0), "dereference p to read", None, 1.4, 1.4)],
+            [("*p = 20", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "change via pointer", None, 1.4, 1.0),
+             ("x becomes 20", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "they share storage", None, 1.4, 1.0),
+             ("x=20,\\;p\\text{ unchanged}", "GREEN_OK", 1.0, (0, -1.2, 0.0), "only x's value moved", None, 1.6, 1.4)],
+        ],
+        "p\text{ is the address of }x;\; *p\text{ dereferences }p",
+        "A pointer stores an address; dereference to read or write through it.",
+        80.9,
+    ),
+    "m10-algebra-algorithms/pseudocode-loops": (
+        "Pseudocode loops",
+        "Repeat a block until a condition is met.",
+        [
+            [("for i = 1 to 10:", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "for loop", None, 1.4, 1.2),
+             ("print(i)", "ORANGE_TERM", 1.0, (0, 0.2, 0.0), "body", None, 1.4, 1.0),
+             ("end for", "GREEN_OK", 1.0, (0, -1.0, 0.0), "end block", None, 1.4, 1.4)],
+            [("while x > 0:", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "while loop", None, 1.4, 1.0),
+             ("x = x - 1", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "reduce", None, 1.4, 1.0),
+             ("end while", "GREEN_OK", 1.0, (0, -1.2, 0.0), "end block", None, 1.4, 1.4)],
+        ],
+        "\text{for: known repeats};\; \text{while: repeat until condition fails}",
+        "for when you know the count, while when you don't.",
+        66.0,
+    ),
+    "m10-algebra-linear-eq/solve": (
+        "Solve a linear equation",
+        "Undo each operation to isolate the variable.",
+        [
+            [("2x+3=11", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "example", "ORANGE_TERM", 1.4, 1.2)],
+            [("2x+3=11", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "start", None, 1.2, 1.0),
+             ("2x=8", "ORANGE_TERM", 1.0, (0, 0.2, 0.0), "subtract 3", None, 1.2, 1.0),
+             ("x=4", "GREEN_OK", 1.0, (0, -1.0, 0.0), "divide by 2", None, 1.2, 1.4)],
+            [("\\dfrac{x+2}{3}=5", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "try this", None, 1.4, 1.0),
+             ("x+2=15", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "multiply by 3", None, 1.4, 1.0),
+             ("x=13", "GREEN_OK", 1.0, (0, -1.2, 0.0), "subtract 2", None, 1.2, 1.4)],
+        ],
+        "\text{apply the inverse operation to both sides}",
+        "Work outwards from the variable until it stands alone.",
+        82.0,
+    ),
+    "m10-algebra-linear-eq/model": (
+        "Model with a linear equation",
+        "Translate the words into x and an equation.",
+        [
+            [("a taxi charges \\$3 plus \\$2 per km", "BLUE_TERM", 0.85, (0, 1.4, 0.0), "scenario", "ORANGE_TERM", 1.6, 1.2)],
+            [("cost = 3 + 2 \\cdot km", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "model", None, 1.6, 1.2),
+             ("y = 2x + 3", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "linear form", None, 1.4, 1.0),
+             ("km=5 \\Rightarrow y = 13", "GREEN_OK", 1.0, (0, -1.2, 0.0), "evaluate", None, 1.6, 1.4)],
+            [("plan: 100 min + \\$0.10 per text", "BLUE_TERM", 0.85, (0, 1.2, 0.0), "second model", None, 1.8, 1.0),
+             ("cost = 0.10n + 100", "GREEN_OK", 1.0, (0, -0.4, 0.0), "n = number of texts", None, 1.6, 1.4)],
+        ],
+        "\text{cost = fixed + rate}\times\text{quantity}",
+        "Identify the fixed part and the rate, then write cost = fixed + rate × variable.",
+        93.6,
+    ),
+    "m10-algebra-linear-inequalities/solve": (
+        "Solve a linear inequality",
+        "Same steps as an equation; flip the sign when dividing by a negative.",
+        [
+            [("2x+3 > 11", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "example", "ORANGE_TERM", 1.4, 1.2)],
+            [("2x+3 > 11", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "start", None, 1.2, 1.0),
+             ("2x > 8", "ORANGE_TERM", 1.0, (0, 0.2, 0.0), "subtract 3", None, 1.2, 1.0),
+             ("x > 4", "GREEN_OK", 1.0, (0, -1.0, 0.0), "divide by 2", None, 1.2, 1.4)],
+            [("-3x < 12", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "negative coefficient", None, 1.4, 1.0),
+             ("x > -4", "GREEN_OK", 1.0, (0, -0.4, 0.0), "flip the sign", None, 1.4, 1.6)],
+        ],
+        "\text{solve like an equation;}\text{ divide by a negative flips the sign}",
+        "Treat it like an equation, but flip the inequality when multiplying or dividing by a negative.",
+        80.6,
+    ),
+    "m10-algebra-linear-inequalities/graph": (
+        "Graph an inequality",
+        "The boundary line and which side to shade.",
+        [
+            [("y < 2x+1", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "example", "ORANGE_TERM", 1.4, 1.2)],
+            [("boundary: y = 2x+1", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "draw the line", None, 1.4, 1.0),
+             ("y < : dashed line", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "strict inequality", None, 1.4, 1.0),
+             ("shade below the line", "GREEN_OK", 1.0, (0, -1.2, 0.0), "y values less than", None, 1.4, 1.4)],
+            [("x \\geq 3", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "vertical line", None, 1.4, 1.0),
+             ("x = 3: solid line", "GREEN_OK", 1.0, (0, -0.4, 0.0), "include the boundary", None, 1.4, 1.6)],
+        ],
+        "\text{boundary line + correct side;}\; <\text{ dashed, }\le\text{ solid}",
+        "Draw the boundary line, then shade the side that satisfies the inequality.",
+        81.7,
+    ),
+    "m10-algebra-simultaneous/substitution": (
+        "Solve by substitution",
+        "Solve one equation for x or y, then swap into the other.",
+        [
+            [("y = 2x+1", "BLUE_TERM", 1.0, (-3.0, 1.4, 0.0), "already solved", None, 1.4, 1.0),
+             ("3x+2y = 16", "ORANGE_TERM", 1.0, (3.0, 1.4, 0.0), "the other equation", None, 1.4, 1.0)],
+            [("3x+2(2x+1)=16", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "substitute", None, 1.6, 1.2),
+             ("3x+4x+2=16", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "expand", None, 1.4, 1.0),
+             ("7x=14 \\Rightarrow x=2", "GREEN_OK", 1.0, (0, -1.2, 0.0), "solve", None, 1.6, 1.2),
+             ("y=2(2)+1=5", "GREEN_OK", 1.0, (0, -2.2, 0.0), "back-substitute", None, 1.4, 1.4)],
+            [("solution: (2, 5)", "GREEN_OK", 1.2, (0, 1.2, 0.0), "both equations satisfied", None, 1.6, 1.4)],
+        ],
+        "\text{isolate, substitute, solve, then back-substitute}",
+        "Solve one equation for a variable, then swap into the other.",
+        83.9,
+    ),
+    "m10-algebra-simultaneous/elimination": (
+        "Solve by elimination",
+        "Add or subtract equations to cancel one variable.",
+        [
+            [("2x + 3y = 12", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "eq 1", None, 1.4, 1.0),
+             ("5x - 3y =  9", "ORANGE_TERM", 1.0, (0, 0.4, 0.0), "eq 2", None, 1.4, 1.0)],
+            [("3y and -3y cancel", "GREEN_OK", 1.0, (0, 1.2, 0.0), "add the equations", None, 1.4, 1.0),
+             ("7x = 21", "BLUE_TERM", 1.0, (0, 0.0, 0.0), "result", None, 1.4, 1.0),
+             ("x = 3", "GREEN_OK", 1.0, (0, -1.0, 0.0), "divide by 7", None, 1.4, 1.0),
+             ("2(3)+3y=12 \\Rightarrow y=2", "GREEN_OK", 1.0, (0, -2.0, 0.0), "back-substitute", None, 1.8, 1.4)],
+            [("x + y = 5", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "simple case", None, 1.4, 1.0),
+             ("x - y = 1", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "subtract to cancel y", None, 1.4, 1.0),
+             ("2x = 6 \\Rightarrow x=3,\\;y=2", "GREEN_OK", 1.0, (0, -1.2, 0.0), "solve", None, 1.6, 1.4)],
+        ],
+        "\text{add/subtract the equations to cancel one variable}",
+        "If the coefficients match (or are opposites), add or subtract to drop one variable.",
+        74.8,
+    ),
+    "m10-algebra-simultaneous/graphical": (
+        "Graphical solution",
+        "Read the intersection off the graph.",
+        [
+            [("y = 2x + 1", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "line 1", "ORANGE_TERM", 1.4, 1.2),
+             ("y = -x + 7", "BLUE_TERM", 1.0, (0, 0.4, 0.0), "line 2", None, 1.4, 1.2)],
+            [("2x+1 = -x+7", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "set y's equal", None, 1.4, 1.0),
+             ("3x = 6 \\Rightarrow x = 2", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "solve", None, 1.4, 1.0),
+             ("y = 2(2)+1 = 5", "GREEN_OK", 1.0, (0, -1.0, 0.0), "substitute back", None, 1.6, 1.4)],
+            [("(2, 5) lies on both lines", "GREEN_OK", 1.0, (0, 1.2, 0.0), "intersection", None, 1.6, 1.4)],
+        ],
+        "(x,y)\text{ satisfying both equations is where the lines cross}",
+        "Plot both lines; the intersection is the solution.",
+        74.9,
+    ),
+    "m10-algebra-gradients/parallel": (
+        "Parallel lines",
+        "Equal gradients, different intercepts.",
+        [
+            [("y = 2x + 1", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "line 1", "ORANGE_TERM", 1.4, 1.2),
+             ("y = 2x - 3", "BLUE_TERM", 1.0, (0, 0.4, 0.0), "line 2", None, 1.4, 1.2),
+             ("both have gradient 2", "GREEN_OK", 1.0, (0, -1.0, 0.0), "parallel", None, 1.6, 1.4)],
+            [("parallel: m_{1}=m_{2}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "rule", None, 1.4, 1.2),
+             ("different y-intercept", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "otherwise they coincide", None, 1.6, 1.2)],
+            [("y=3x+1", "BLUE_TERM", 0.9, (-3.0, 1.2, 0.0), "parallel form", None, 1.4, 1.0),
+             ("y=3x+5", "GREEN_OK", 0.9, (3.0, 1.2, 0.0), "parallel partner", None, 1.4, 1.4)],
+        ],
+        "\text{parallel lines have the same gradient, different intercept}",
+        "Same gradient; different y-intercept — that's a parallel.",
+        76.6,
+    ),
+    "m10-algebra-gradients/perpendicular": (
+        "Perpendicular lines",
+        "Gradients multiply to -1.",
+        [
+            [("m_{1} \\cdot m_{2} = -1", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "perpendicular condition", "ORANGE_TERM", 1.6, 1.4)],
+            [("m_{1}=2", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "given", None, 1.4, 1.0),
+             ("m_{2} = -\\dfrac{1}{2}", "GREEN_OK", 1.0, (0, -0.4, 0.0), "flip, negate", None, 1.6, 1.4),
+             ("(2)(-\\tfrac{1}{2}) = -1", "GREEN_OK", 1.0, (0, -1.6, 0.0), "check", None, 1.4, 1.4)],
+            [("m_{1}=-\\tfrac{1}{3}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "negative gradient", None, 1.6, 1.0),
+             ("m_{2}=3", "GREEN_OK", 1.0, (0, -0.4, 0.0), "flip, drop sign", None, 1.4, 1.4)],
+        ],
+        "m_{1}\cdot m_{2}=-1",
+        "Perpendicular gradients are negative reciprocals of each other.",
+        85.7,
+    ),
+    "m10-algebra-relations/shape-signature": (
+        "Shape of a relation",
+        "Sketch from the form of the rule.",
+        [
+            [("y = 2x^{2}", "BLUE_TERM", 1.0, (-3.0, 1.4, 0.0), "quadratic", None, 1.4, 1.0),
+             ("y = 3^{x}", "ORANGE_TERM", 1.0, (3.0, 1.4, 0.0), "exponential", None, 1.4, 1.0)],
+            [("y=2x^{2}: parabola", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "U-shape through (0,0)", None, 1.6, 1.2),
+             ("y=3^{x}: curves up", "ORANGE_TERM", 1.0, (0, -0.2, 0.0), "always positive", None, 1.6, 1.2),
+             ("y=\\tfrac{1}{x}: hyperbola", "GREEN_OK", 1.0, (0, -1.6, 0.0), "two branches", None, 1.6, 1.4)],
+        ],
+        "\text{shape comes from the family, not the numbers}",
+        "Read the form: x^2 makes a parabola, a^x curves, 1/x has two branches.",
+        90.6,
+    ),
+    "m10-algebra-relations/transformations": (
+        "Transformations of relations",
+        "Shift, stretch and reflect to move the graph.",
+        [
+            [("y = x^{2}", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "starting parabola", "ORANGE_TERM", 1.4, 1.2)],
+            [("y = x^{2} + 3", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "shift up 3", None, 1.4, 1.2),
+             ("y = (x-2)^{2}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "shift right 2", None, 1.4, 1.2),
+             ("y = 2x^{2}", "GREEN_OK", 1.0, (0, -1.2, 0.0), "stretch vertically by 2", None, 1.4, 1.4)],
+            [("y = -x^{2}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "reflect across x-axis", None, 1.4, 1.0),
+             ("y = (x-1)^{2} - 2", "GREEN_OK", 1.0, (0, -0.4, 0.0), "combine: shift right 1, down 2", None, 1.8, 1.6)],
+        ],
+        "\text{inside parentheses shifts along }x,\; \text{outside shifts along }y",
+        "Outside the bracket shifts the graph up or down; inside the bracket shifts left or right.",
+        81.3,
+    ),
+    "m10-algebra-linear-fractions/clear-numerical": (
+        "Clear numerical denominators",
+        "Multiply both sides by the common denominator.",
+        [
+            [("\\dfrac{x}{2}+\\dfrac{x}{3}=5", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "start", "ORANGE_TERM", 1.4, 1.2)],
+            [("\\text{LCD}=6", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "least common denominator", None, 1.4, 1.0),
+             ("6\\cdot \\dfrac{x}{2}+6\\cdot \\dfrac{x}{3}=6\\cdot 5", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "multiply every term", None, 1.8, 1.2),
+             ("3x+2x=30", "GREEN_OK", 1.0, (0, -1.2, 0.0), "simplify", None, 1.4, 1.0),
+             ("5x=30 \\Rightarrow x=6", "GREEN_OK", 1.0, (0, -2.2, 0.0), "solve", None, 1.4, 1.4)],
+            [("\\dfrac{x+1}{4}=\\dfrac{x-1}{6}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "two-fraction equation", None, 1.6, 1.0),
+             ("LCD=12", "ORANGE_TERM", 0.9, (0, 0.0, 0.0), "12", None, 1.0, 1.0),
+             ("3(x+1)=2(x-1) \\Rightarrow x=-5", "GREEN_OK", 0.9, (0, -1.2, 0.0), "solve", None, 1.6, 1.4)],
+        ],
+        "\text{multiply every term by the LCD}",
+        "Find the least common denominator, then multiply every term by it.",
+        92.4,
+    ),
+    "m10-algebra-linear-fractions/algebraic-denominators": (
+        "Clear algebraic denominators",
+        "Multiply through by the algebraic denominator.",
+        [
+            [("\\dfrac{3}{x}+\\dfrac{2}{x-1}=1", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "start", "ORANGE_TERM", 1.4, 1.2)],
+            [("(x)(x-1)\\cdot \\dfrac{3}{x}+(x)(x-1)\\cdot \\dfrac{2}{x-1}=(x)(x-1)", "ORANGE_TERM", 0.9, (0, 1.2, 0.0), "multiply by x(x-1)", None, 2.0, 1.2),
+             ("3(x-1)+2x=x^{2}-x", "BLUE_TERM", 0.95, (0, 0.0, 0.0), "simplify", None, 1.4, 1.0),
+             ("3x-3+2x=x^{2}-x", "ORANGE_TERM", 0.95, (0, -1.0, 0.0), "expand", None, 1.4, 1.0),
+             ("x^{2}-6x+3=0", "GREEN_OK", 0.95, (0, -2.0, 0.0), "bring all to one side", None, 1.4, 1.4)],
+            [("always check x\\neq 0,\\; x\\neq 1", "GREEN_OK", 1.0, (0, 1.2, 0.0), "domain restriction", None, 1.6, 1.4)],
+        ],
+        "\text{multiply every term by the algebraic LCD}",
+        "Multiply through by the LCD, but never forget the domain restrictions.",
+        92.4,
+    ),
+    "m10-algebra-exponentials/matching-bases": (
+        "Match the bases",
+        "Rewrite both sides with the same base, then line up exponents.",
+        [
+            [("9^{x}=27", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "exponential equation", "ORANGE_TERM", 1.4, 1.2)],
+            [("9=3^{2}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "left as base 3", None, 1.4, 1.0),
+             ("27=3^{3}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "right as base 3", None, 1.4, 1.0),
+             ("(3^{2})^{x}=3^{3}", "GREEN_OK", 1.0, (0, -1.2, 0.0), "same base", None, 1.4, 1.0),
+             ("2x=3 \\Rightarrow x=\\tfrac{3}{2}", "GREEN_OK", 1.0, (0, -2.2, 0.0), "solve the linear equation", None, 1.6, 1.4)],
+            [("8^{x}=2^{6}", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "try this", None, 1.4, 1.0),
+             ("(2^{3})^{x}=2^{6} \\Rightarrow 3x=6 \\Rightarrow x=2", "GREEN_OK", 0.9, (0, -0.4, 0.0), "same approach", None, 1.6, 1.4)],
+        ],
+        "a^{m}=a^{n} \Rightarrow m=n\text{ (when }a>0,\;a\neq 1)",
+        "Rewrite both sides with the same base, then solve the linear equation in the exponent.",
+        64.8,
+    ),
+    "m10-algebra-exponentials/using-logs": (
+        "Use logarithms",
+        "Take the log of both sides to bring the exponent down.",
+        [
+            [("10^{x}=250", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "exponential equation", "ORANGE_TERM", 1.4, 1.2)],
+            [("\\log(10^{x})=\\log(250)", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "log both sides", None, 1.4, 1.0),
+             ("x\\log(10)=\\log(250)", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "bring down the exponent", None, 1.4, 1.0),
+             ("x=\\dfrac{\\log(250)}{\\log(10)} \\approx 2.40", "GREEN_OK", 0.95, (0, -1.2, 0.0), "solve", None, 1.8, 1.4)],
+            [("2^{x}=5", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "different base", None, 1.4, 1.0),
+             ("x=\\dfrac{\\log 5}{\\log 2} \\approx 2.32", "GREEN_OK", 0.95, (0, -0.4, 0.0), "change-of-base", None, 1.6, 1.4)],
+        ],
+        "x=\dfrac{\log(\text{RHS})}{\log(\text{base})}",
+        "Take the log of both sides; the exponent comes down and becomes a multiplier.",
+        76.0,
+    ),
+    "m10-algebra-modelling/choose-model": (
+        "Choose a model",
+        "Match the trend in the data to a function family.",
+        [
+            [("linear: y = mx + b", "BLUE_TERM", 0.95, (-3.0, 1.2, 0.0), "steady growth", None, 1.6, 1.2),
+             ("quadratic: y = ax^{2}", "ORANGE_TERM", 0.95, (3.0, 1.2, 0.0), "parabolic shape", None, 1.6, 1.2),
+             ("exponential: y = a\\cdot b^{x}", "GREEN_OK", 0.95, (0, -0.4, 0.0), "compound growth", None, 1.6, 1.4)],
+            [("scatter plot", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "examine shape", None, 1.4, 1.0),
+             ("constant rate of change \\Rightarrow linear", "ORANGE_TERM", 0.9, (0, 0.0, 0.0), "differences match", None, 1.6, 1.2),
+             ("doubling \\Rightarrow exponential", "GREEN_OK", 0.9, (0, -1.2, 0.0), "ratios match", None, 1.6, 1.4)],
+        ],
+        "\text{linear: equal differences; quadratic: parabolic; exponential: equal ratios}",
+        "Linear for steady change, quadratic for parabolic data, exponential for doubling/halving.",
+        76.2,
+    ),
+    "m10-algebra-modelling/compound-interest": (
+        "Compound interest model",
+        "Balance grows by a fixed percentage each period.",
+        [
+            [("A = P(1+r)^{n}", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "compound interest", "ORANGE_TERM", 1.4, 1.2)],
+            [("P=1000,\\;r=0.05,\\;n=3", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "values", None, 1.4, 1.0),
+             ("A=1000(1.05)^{3}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "substitute", None, 1.4, 1.0),
+             ("A=1000(1.1576)\\approx 1157.6", "GREEN_OK", 0.95, (0, -1.2, 0.0), "evaluate", None, 1.8, 1.4)],
+            [("interest is added each period", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "vs simple interest", None, 1.6, 1.0),
+             ("growth accelerates", "GREEN_OK", 0.9, (0, -0.4, 0.0), "exponential curve", None, 1.4, 1.4)],
+        ],
+        "A=P(1+r)^{n}",
+        "Each period the balance is multiplied by (1 + rate), not just added.",
+        97.0,
+    ),
+    "m10-algebra-modelling/inverse-proportion": (
+        "Inverse proportion",
+        "When one doubles, the other halves.",
+        [
+            [("y = \\dfrac{k}{x}", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "inverse proportion", "ORANGE_TERM", 1.4, 1.2)],
+            [("xy = k", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "product is constant", None, 1.4, 1.0),
+             ("x=2 \\Rightarrow y=\\tfrac{k}{2}", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "double x, halve y", None, 1.6, 1.0),
+             ("x=4 \\Rightarrow y=\\tfrac{k}{4}", "GREEN_OK", 1.0, (0, -1.2, 0.0), "double again", None, 1.6, 1.4)],
+            [("speed \\times time = distance", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "fixed trip", None, 1.6, 1.0),
+             ("t=\\dfrac{d}{v}", "GREEN_OK", 0.9, (0, -0.4, 0.0), "time shrinks with speed", None, 1.4, 1.4)],
+        ],
+        "y=\dfrac{k}{x}\Longleftrightarrow xy=k",
+        "When x doubles, y halves — the product xy stays the same.",
+        76.2,
+    ),
+    "m10-algebra-numerical/graphical": (
+        "Graphical root-finding",
+        "Where the curve crosses the x-axis.",
+        [
+            [("y = x^{3} - x - 1", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "target equation", "ORANGE_TERM", 1.4, 1.2)],
+            [("x=1 \\Rightarrow y=-1", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "test x=1", None, 1.4, 1.0),
+             ("x=2 \\Rightarrow y=5", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "sign changes between", None, 1.4, 1.0),
+             ("sign change \\Rightarrow root between 1 and 2", "GREEN_OK", 0.9, (0, -1.2, 0.0), "intermediate value theorem", None, 1.8, 1.4)],
+            [("refine: x=1.3 \\Rightarrow y\\approx -0.003", "GREEN_OK", 0.85, (0, 1.2, 0.0), "narrower bracket", None, 1.8, 1.4)],
+        ],
+        "\text{root} = x \text{ where } y(x)=0",
+        "Sketch the graph and read off where it crosses the x-axis.",
+        87.3,
+    ),
+    "m10-algebra-numerical/refine": (
+        "Bisection refinement",
+        "Halve the interval each iteration.",
+        [
+            [("f(1)=-1,\\;f(2)=5", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "bracket the root", "ORANGE_TERM", 1.4, 1.2)],
+            [("midpoint m=1.5", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "halve the interval", None, 1.4, 1.0),
+             ("f(1.5)=1.375", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "positive, so root is in [1, 1.5]", None, 1.6, 1.2),
+             ("new bracket [1, 1.5]", "GREEN_OK", 1.0, (0, -1.2, 0.0), "keep the sign-change interval", None, 1.4, 1.4)],
+            [("repeat: midpoint, evaluate, narrow", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "iteration", None, 1.6, 1.0),
+             ("interval shrinks by half each step", "GREEN_OK", 0.9, (0, -0.4, 0.0), "converges fast", None, 1.4, 1.4)],
+        ],
+        "\text{bisection halves the bracket each iteration}",
+        "Take the midpoint, keep the half that still has a sign change.",
+        103.3,
+    ),
+    "m10-algebra-quadratics/null-factor-law": (
+        "Null factor law",
+        "Two things multiplied to zero means at least one is zero.",
+        [
+            [("(x+2)(x+3)=0", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "factored to zero", "ORANGE_TERM", 1.4, 1.2)],
+            [("AB=0", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "general form", None, 1.4, 1.0),
+             ("A=0\\text{ or }B=0", "GREEN_OK", 1.0, (0, 0.0, 0.0), "null factor law", None, 1.4, 1.0),
+             ("x+2=0 \\Rightarrow x=-2", "ORANGE_TERM", 1.0, (0, -1.2, 0.0), "first bracket", None, 1.4, 1.0),
+             ("x+3=0 \\Rightarrow x=-3", "ORANGE_TERM", 1.0, (0, -2.2, 0.0), "second bracket", None, 1.4, 1.4)],
+            [("first factorise, then apply", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "x^{2}+5x+6=0 \\Rightarrow (x+2)(x+3)=0", None, 1.8, 1.0),
+             ("x=-2\\text{ or }x=-3", "GREEN_OK", 0.9, (0, -0.4, 0.0), "two roots", None, 1.4, 1.4)],
+        ],
+        "AB=0 \Longleftrightarrow A=0\text{ or }B=0",
+        "Once you have two brackets multiplied to zero, each bracket gives a root.",
+        82.3,
+    ),
+    "m10-algebra-quadratics/quadratic-formula": (
+        "Quadratic formula",
+        "Works for any quadratic ax^2 + bx + c = 0.",
+        [
+            [("ax^{2}+bx+c=0", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "standard form", "ORANGE_TERM", 1.4, 1.2),
+             ("x = \\dfrac{-b\\pm\\sqrt{b^{2}-4ac}}{2a}", "GREEN_OK", 1.0, (0, 0.2, 0.0), "the formula", None, 1.8, 1.4)],
+            [("2x^{2}+5x-3=0", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "worked example", None, 1.4, 1.0),
+             ("a=2,\\;b=5,\\;c=-3", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "identify a, b, c", None, 1.2, 1.0),
+             ("x = \\dfrac{-5\\pm\\sqrt{25+24}}{4}=\\dfrac{-5\\pm 7}{4}", "GREEN_OK", 0.85, (0, -1.2, 0.0), "substitute", None, 2.0, 1.2),
+             ("x=\\tfrac{1}{2} \\text{ or } x=-3", "GREEN_OK", 1.0, (0, -2.2, 0.0), "two roots", None, 1.4, 1.4)],
+            [("discriminant \\Delta = b^{2}-4ac", "BLUE_TERM", 0.9, (0, 1.2, 0.0), "under the square root", None, 1.4, 1.0),
+             ("\\Delta>0: two roots", "ORANGE_TERM", 0.9, (0, 0.0, 0.0), "crosses x-axis twice", None, 1.4, 1.0),
+             ("\\Delta=0: one root", "GREEN_OK", 0.9, (0, -1.0, 0.0), "touches x-axis", None, 1.4, 1.4)],
+        ],
+        "x=\dfrac{-b\pm\sqrt{b^{2}-4ac}}{2a}",
+        "Plug a, b, c into the formula; the discriminant tells you how many roots.",
+        86.2,
+    ),
+    "m10-algebra-quadratics/completing-square": (
+        "Completing the square",
+        "Rewrite as a perfect square plus a constant.",
+        [
+            [("x^{2}+6x+5=0", "BLUE_TERM", 1.0, (0, 1.4, 0.0), "start", "ORANGE_TERM", 1.4, 1.2)],
+            [("x^{2}+6x=-5", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "move constant", None, 1.2, 1.0),
+             ("(\\tfrac{6}{2})^{2}=3^{2}=9", "ORANGE_TERM", 1.0, (0, 0.0, 0.0), "half the coefficient, square", None, 1.4, 1.0),
+             ("x^{2}+6x+9=4", "BLUE_TERM", 1.0, (0, -1.0, 0.0), "add 9 to both sides", None, 1.4, 1.0),
+             ("(x+3)^{2}=4", "GREEN_OK", 1.1, (0, -2.0, 0.0), "perfect square", None, 1.4, 1.4),
+             ("x+3=\\pm 2", "GREEN_OK", 1.0, (0, -3.0, 0.0), "take the root", None, 1.4, 1.4)],
+            [("x=-1 \\text{ or } x=-5", "GREEN_OK", 1.0, (0, 1.2, 0.0), "subtract 3", None, 1.4, 1.6)],
+        ],
+        "(x+\tfrac{b}{2})^{2}=\tfrac{b^{2}}{4}-c",
+        "Half the linear coefficient, square it, add to both sides.",
+        75.0,
+    ),
+    "m10-algebra-quadratics/discriminant": (
+        "The discriminant",
+        "b^2 - 4ac tells you how many real roots there are.",
+        [
+            [("\\Delta = b^{2}-4ac", "BLUE_TERM", 1.1, (0, 1.4, 0.0), "under the square root", "ORANGE_TERM", 1.4, 1.2)],
+            [("\\Delta > 0", "GREEN_OK", 1.0, (-3.0, 1.2, 0.0), "two real roots", None, 1.4, 1.0),
+             ("\\Delta = 0", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "one repeated root", None, 1.4, 1.0),
+             ("\\Delta < 0", "ORANGE_TERM", 1.0, (3.0, 1.2, 0.0), "no real roots", None, 1.4, 1.0)],
+            [("x^{2}+4x+1", "BLUE_TERM", 1.0, (0, 1.2, 0.0), "example 1", None, 1.2, 1.0),
+             ("\\Delta=16-4=12>0", "GREEN_OK", 1.0, (0, 0.0, 0.0), "two roots", None, 1.6, 1.4),
+             ("x^{2}+4x+4", "BLUE_TERM", 1.0, (0, -1.2, 0.0), "example 2", None, 1.2, 1.0),
+             ("\\Delta=16-16=0", "GREEN_OK", 1.0, (0, -2.2, 0.0), "one root", None, 1.4, 1.4)],
+        ],
+        "\Delta\begin{cases}>0\text{ two roots}\\=0\text{ one root}\\ <0\text{ no real root}\end{cases}",
+        "Read the sign of b^2 - 4ac to know how many real roots the quadratic has.",
+        79.7,
+    ),
+}
+
+
+def main():
+    pairs = []
+    for key, (title, subtitle, beats, takeaway_eq, takeaway_sub, audio_seconds) in SCENES.items():
+        topic, lesson = key.split("/", 1)
+        stem = f"{topic}-{lesson}"
+        cls = "".join(part[:1].upper() + part[1:] for part in stem.split("-")) + "Scene"
+        pairs.append((topic, lesson, cls))
+
+    def write(name, rows):
+        with open(OUT / name, "w") as f:
+            f.write("#!/usr/bin/env bash\nset -euo pipefail\n\n")
+            f.write("for row in \\\n")
+            for i, (t, l, c) in enumerate(rows):
+                end = " \\\n" if i < len(rows) - 1 else "\n"
+                f.write(f'  "{t}|{l}|{c}"{end}')
+            f.write('do\n  IFS="|" read -r topic lesson cls <<< "$row"\n')
+            f.write('  bash scripts/videos/_render.sh "scripts/videos/${topic}-${lesson}.py" "$cls" "$topic" "$lesson" ql\n')
+            f.write("done\n")
+        (OUT / name).chmod(0o755)
+
+    write("_render_all_year10.sh", pairs)
+    for shard in range(4):
+        rows = [(t, l, c) for i, (t, l, c) in enumerate(pairs) if i % 4 == shard]
+        write(f"_render_year10_{shard}.sh", rows)
+
+    print(f"wrote {len(pairs)} pairs")
+
+    # Sample 3 lesson tuples
+    for i, key in enumerate(list(SCENES.keys())[:3]):
+        print(f'  {key!r}: {SCENES[key][:2]}')
+
+
+if __name__ == "__main__":
+    main()
